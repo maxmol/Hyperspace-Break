@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Space Generals</string>
+    <string name="menu_new_game">New Game</string>
+    <string name="menu_continue_game">Continue Game</string>
+    <string name="menu_nosavedfiles">No Saved Games!</string>
+
+    <string name="newgame_text">Safe File Name</string>
+    <string name="newgame_start">Start Game</string>
+
+    <string name="level">Level</string>
+
+    <string name="savefileinfo_continue">Continue</string>
+    <string name="savefileinfo_delete">Delete</string>
+</resources>
