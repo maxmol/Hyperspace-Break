@@ -7,21 +7,22 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-class IFileExistanceException extends Exception {
-    IFileExistanceException(String filename) {
-        super("File does not exist (" + filename + ")");
-    }
-}
-
-class IFileNotInitialized extends Exception {
-    IFileNotInitialized() {
-        super("File has not been initialized");
-    }
-}
-
+// That was my homework. I thought it was a good idea to use it in my project.
 public class IFile {
     private String filename;
     private File file;
+
+    public class IFileExistanceException extends Exception {
+        IFileExistanceException(String filename) {
+            super("File does not exist (" + filename + ")");
+        }
+    }
+
+    public class IFileNotInitialized extends Exception {
+        IFileNotInitialized() {
+            super("File has not been initialized");
+        }
+    }
 
     public IFile() {
 

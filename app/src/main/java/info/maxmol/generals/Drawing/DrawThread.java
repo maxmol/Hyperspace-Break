@@ -4,25 +4,22 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.SystemClock;
 import android.support.v7.app.AlertDialog;
 import android.view.SurfaceHolder;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import info.maxmol.generals.FightActivity;
 import info.maxmol.generals.GameActivity;
 import info.maxmol.generals.classes.Game;
+import info.maxmol.generals.classes.MUtil;
 import info.maxmol.generals.classes.Stages;
 
+// This is the drawing and thinking machine. It calls and draws all entities in the game.
 public class DrawThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private boolean running = true;
-    public static final int interval = 10;
+    public static final int interval = 20;
     public long sysTime;
-    public long sysTime2;
+    private int dieCounter = 50; // Wait a bit before creating a dialog window
 
     private static float cp(float pixels) { // Converted Pixels
         return GameDraw.cp(pixels);
@@ -40,56 +37,79 @@ public class DrawThread extends Thread {
         this.surfaceHolder = surfaceHolder;
     }
 
+    public void stageSleep(int intervals) {
+        GameDraw.context.stageSleeping += MUtil.Clamp(intervals, 0);
+    }
+
+    private void StageTick() {
+        if (GameDraw.context.stageSleeping > 0) {
+            GameDraw.context.stageSleeping--;
+        }
+    }
+
     @Override
     public void run() {
         Stages.start();
 
         while (running) {
-            // --- TickStuff --
-
-            Stages.completion--;
-
-            sysTime = System.currentTimeMillis();
-            // - Add stars
-
-            if (Math.random() < BackgroundStar.SPAWN_CHANCE) {
-                GameDraw.context.AddEntity(new BackgroundStar());
-            }
-
-            // - Add enemies
-
-            Enemy.counterToNextSpawn -= interval;
-            if (Enemy.counterToNextSpawn <= 0) {
-                GameDraw.context.AddEntity(new Enemy());
-                Enemy.counterToNextSpawn = Stages.enemySpawnRate();
-            }
-
-            // --- Core Stuff ---
-
-            for (Entity ent: (ArrayList<Entity>) GameDraw.context.entities.clone()) {
-                ent.Tick();
-            }
-
             Canvas canvas = surfaceHolder.lockCanvas();
+
             if (canvas == null) {
                 continue;
             }
 
+            // --- TickStuff ---
+
+            if (!GameDraw.context.paused) StageTick();
+
+            sysTime = System.currentTimeMillis();
+
+
+            // - Add enemies
+            /*
+            counterToEnemyNextSpawn++;
+
+            if (Stages.COUNT < Game.getStage() - 1) {
+                if (counterToEnemyNextSpawn >= 250) {
+                    Enemy e = new Enemy();
+                    e.setPos(new Vec2D(Math.random() * GameDraw.context.ScrW, cp(-20)));
+                    e.setBulletGenerator(Stages.getBulletGenerator((int) (Math.random() * 7)));
+
+                    GameDraw.context.AddEntity(e);
+
+                    counterToEnemyNextSpawn = 0;
+                }
+            }*/
+
+            // --- Core Stuff ---
+
+            if (!GameDraw.context.paused) {
+                // - Tick
+                for (Entity ent : GameDraw.context.getEntities()) {
+                    ent.Tick();
+                }
+            }
+
             Paint p = new Paint();
-            p.setColor(Color.rgb(0, 0, 64));
             p.setAntiAlias(true);
+            p.setColor(Color.rgb(0, 0, 64));
             canvas.drawPaint(p);
 
-            for (Entity ent : GameDraw.context.entities) {
+            if (GameDraw.context.shouldSort) {
+                GameDraw.context.SortEntities();
+            }
+
+            for (Entity ent : GameDraw.context.getEntities()) {
                 ent.Draw(canvas);
             }
 
-            p.setColor(Color.WHITE);
-            p.setTextSize(cp(16));
-            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(10), cp(40), p);
-            p.setTextAlign(Paint.Align.RIGHT);
-            canvas.drawText((int) (((float) Stages.stageTime() - Stages.completion)/Stages.stageTime()*100) + "% Complete", GameDraw.context.ScrW - cp(10), cp(40), p);
+            for (SuperVGUI v : GameDraw.context.getVGUIObjects()) {
+                v.Draw(canvas);
+            }
 
+            p.setColor(Color.WHITE);
+            p.setTextSize(cp(42));
+            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(10), cp(40), p);
             p.setColor(Color.GREEN);
 
             try {
@@ -103,55 +123,69 @@ public class DrawThread extends Thread {
 
             }
 
-            if (Stages.completion % 10 == 0) {
-                sysTime2 = (int) (1f / ((System.currentTimeMillis() - sysTime) / 1000f));
-            }
-            System.out.println(sysTime2);
+            // --- Pause ---
 
-            p.setTextAlign(Paint.Align.CENTER);
-            p.setTextSize(cp(64));
-            canvas.drawText(sysTime2 + " fps", GameDraw.context.ScrW / 2, cp(50), p);
+            if (GameDraw.context.paused) {
+                p.setColor(Color.WHITE);
+                p.setTextSize(cp(64));
+                p.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("Paused", GameDraw.context.ScrW / 2, cp(120), p);
+            }
+
+            long deltaTime = System.currentTimeMillis() - sysTime + 1;
+            //canvas.drawText(1000/deltaTime + " FPS", GameDraw.context.ScrW/10, cp(120), p); // FPS counter
+
             surfaceHolder.unlockCanvasAndPost(canvas);
 
-            if (Stages.completion == 0) {
-                Game.addMoney(Stages.getMoney());
-                Game.nextStep();
-
-                FightActivity.context.runOnUiThread(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        new AlertDialog.Builder(FightActivity.context)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setTitle("Congrats!")
-                                .setMessage("You have completed this stage.")
-                                .setPositiveButton("Continue", new DialogInterface.OnClickListener()
-                                {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        FightActivity.context.finish();
-                                    }
-
-                                })
-                                .show();
-                    }
-                });
-
-                kill();
-            }
-
-            long deltaTime = System.currentTimeMillis() - sysTime;
-
             if (deltaTime < interval) {
-                /*try {
+                try {
                     sleep(interval - deltaTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }*/
+                }
+            }
+
+            if (GameDraw.context.ship == null || !GameDraw.context.ship.isValid()) {
+                if (dieCounter > 0) {
+                    dieCounter--;
+                }
+                else {
+                    for (Entity ent : GameDraw.context.getEntities()) {
+                        ent.Remove();
+                    }
+
+                    FightActivity.context.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AlertDialog.Builder(FightActivity.context)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .setTitle(Game.getStage() == Stages.COUNT + 1 ? "Collected: " + Game.formatMoney(Stages.getMoney()) : "You lose!")
+                                    .setMessage("Your ship is destroyed.")
+                                    .setPositiveButton("Close", new DialogInterface.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            GameActivity.context.recreate(); // Weird bug fix
+                                            FightActivity.context.finish();
+                                        }
+
+                                    })
+                                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                        @Override
+                                        public void onCancel(DialogInterface dialogInterface) {
+                                            GameActivity.context.recreate();
+                                            FightActivity.context.finish();
+                                        }
+                                    })
+                                    .show();
+                        }
+                    });
+
+                    kill();
+                }
             }
         }
     }
-
 
     public void kill() {
         running = false;

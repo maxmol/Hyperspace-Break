@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Space Generals</string>
+    <string name="app_name">Hyperspace Break</string>
     <string name="menu_new_game">New Game</string>
     <string name="menu_continue_game">Continue Game</string>
     <string name="menu_nosavedfiles">No Saved Games!</string>

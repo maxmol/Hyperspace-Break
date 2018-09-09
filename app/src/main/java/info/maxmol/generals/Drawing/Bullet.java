@@ -1,5 +1,6 @@
 package info.maxmol.generals.Drawing;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,49 +10,68 @@ import android.graphics.Region;
 import java.util.ArrayList;
 
 import info.maxmol.generals.classes.MUtil;
+import info.maxmol.generals.classes.Stages;
 import info.maxmol.generals.classes.Vec2D;
 
+import static info.maxmol.generals.Drawing.GameDraw.cp;
+
+// Just a bullet.
 public class Bullet extends Entity{
     public Vec2D velocity;
     public Vec2D startVelocity;
     public double acceleration;
     public double curving = 0;
-    private int damage;
-    private Entity owner;
-    private static double bulletLen = cp(16);
-    private static double bulletWide = cp(8);
+    protected int damage;
+    protected Entity owner;
+    protected static double bulletLen = 16;
+    protected static double bulletWide = 8;
+
+    protected Paint bulletPaint;
+
+    protected void initPaint() {
+        bulletPaint = new Paint();
+        bulletPaint.setAntiAlias(true);
+        //bulletPaint.setMaskFilter(new BlurMaskFilter(cp(1), BlurMaskFilter.Blur.NORMAL));
+    }
 
     public Bullet() {
-
+        initPaint();
     }
 
     public Bullet(Vec2D vec2D) {
         setPos(vec2D);
+        initPaint();
     }
 
     public Bullet(Vec2D vec2D, Vec2D vel, double accel) {
         setPos(vec2D);
         velocity = vel;
-        startVelocity = vel;
+        startVelocity = vel.copy();
         acceleration = accel;
+
+        initPaint();
     }
 
     public Bullet(Vec2D vec2D, Vec2D vel, double accel, int damage) {
         setPos(vec2D);
         velocity = vel;
-        startVelocity = vel;
+        startVelocity = vel.copy();
         acceleration = accel;
         setDamage(damage);
+
+        initPaint();
     }
 
     public Bullet(Vec2D vec2D, Vec2D vel, double accel, int damage, double curving, Entity owner) {
         setPos(vec2D);
         velocity = vel;
-        startVelocity = vel;
+        startVelocity = vel.copy();
         acceleration = accel;
         this.curving = curving;
         setDamage(damage);
         this.owner = owner;
+
+        initPaint();
     }
 
     public Entity getOwner() {
@@ -71,6 +91,7 @@ public class Bullet extends Entity{
     @Override
     public void Tick() {
         Move(velocity);
+
         velocity.add(startVelocity.mul(acceleration));
         if (curving != 0) velocity.Rotate(curving);
 
@@ -78,43 +99,40 @@ public class Bullet extends Entity{
             Remove();
         }
 
-        Region clip = new Region(0, 0, GameDraw.context.ScrW, GameDraw.context.ScrH);
+        if (this.getOwner() instanceof Enemy || this.getOwner() instanceof Bullet) {
+            if (GameDraw.context.ship.shipRect.contains((int) getPos().x, (int) getPos().y))
+                hit(GameDraw.context.ship);
+        }
+        else {
+            for (Entity e : GameDraw.context.getEntities()) {
+                if (!e.isPhysicsObject()) continue;
+                if (this.getOwner() == e) continue;
+                if (e.getPos().Distance(this.getPos()) > e.getCollisionRadius()) continue;
 
-        for (Entity e: (ArrayList<Entity>) GameDraw.context.entities.clone()) {
-            if (!e.isPhysicsObject()) continue;
-            if (e instanceof Bullet) continue;
+                if (e.getRegion().contains((int) (getPos().x - e.getPos().x), (int) (getPos().y - e.getPos().y))) hit(e);
 
-            if (this.getOwner() instanceof Enemy && e instanceof Enemy) {
-                continue;
-            }
-
-            if (this.getOwner() == e) {
-                continue;
-            }
-
-            if (e.getPos().Distance(this.getPos()) > cp(100)) { // FPS Fix
-                continue;
-            }
-
-            Region eReg = new Region();
-            eReg.setPath(e.generatePath(), clip);
-
-            if (eReg.contains((int) (getPos().x), (int) (getPos().y)))
-            {
-                e.takeDamage(getDamage());
-                Remove();
             }
         }
     }
 
+    private void hit(Entity e) {
+        e.takeDamage(getDamage());
+        GameDraw.context.AddEntity(new SparksEffect(getPos(), 3 + (int)(Math.random() * 3), 1, 0, 6, 1, this.getOwner() instanceof Ship ? Color.rgb(64, 128, 255) : Color.RED));
+        Remove();
+    }
+
     @Override
     public void Draw(Canvas canvas) {
-        Paint p = new Paint();
-        p.setColor(Color.RED);
+        if (this.getOwner() instanceof Ship) {
+            bulletPaint.setColor(Color.rgb(64, 128, 255));
+        }
+        else {
+            bulletPaint.setColor(Color.RED);
+        }
 
         Vec2D normVel = velocity.GetNormalized();
-        Vec2D drawLen = normVel.mul(bulletLen);
-        Vec2D drawWide = normVel.GetRotated(90).mul(bulletWide);
+        Vec2D drawLen = normVel.mul(cp(bulletLen));
+        Vec2D drawWide = normVel.GetRotated(90).mul(cp(bulletWide));
 
         Vec2D top = getPos().plus(drawLen);
         Vec2D bottom = getPos().minus(drawLen);
@@ -128,7 +146,7 @@ public class Bullet extends Entity{
         path.lineTo((float) left.x, (float) left.y);
         path.close();
 
-        canvas.drawPath(path, p);
+        canvas.drawPath(path, bulletPaint);
     }
 
     @Override
@@ -138,6 +156,6 @@ public class Bullet extends Entity{
 
     @Override
     public boolean isPhysicsObject() {
-        return true;
+        return false;
     }
 }

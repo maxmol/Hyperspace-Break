@@ -1,5 +1,6 @@
 package info.maxmol.generals.classes;
 
+// Some simple math methods
 public class MUtil {
     public static double Clamp(double num, double min, double max) {
         if (num > max) {

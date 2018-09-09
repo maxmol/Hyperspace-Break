@@ -1,7 +1,6 @@
 package info.maxmol.generals.classes;
 
-import java.util.Random;
-
+// My own Point class. With some useful additions.
 public class Vec2D {
     public double x, y;
 
@@ -58,9 +57,7 @@ public class Vec2D {
     }
 
     public static Vec2D random() {
-        Random r = new Random();
-
-        double degree = Math.toRadians(r.nextInt(360));
+        double degree = Math.toRadians(Math.random() * 360);
         return new Vec2D(Math.sin(degree), Math.cos(degree));
     }
 
@@ -107,6 +104,19 @@ public class Vec2D {
         double newY = this.x * sin + this.y * cos;
 
         return new Vec2D(newX, newY);
+    }
+
+    public double getRotationTo(Vec2D targetVec) {
+        double theta = Math.atan2(targetVec.y - this.y, targetVec.x - this.x);
+
+        theta -= Math.PI/2.0;
+        double angle = Math.toDegrees(theta);
+
+        if (angle < 0) {
+            angle += 360;
+        }
+
+        return angle;
     }
 
     @Override

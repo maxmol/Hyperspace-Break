@@ -2,7 +2,8 @@ package info.maxmol.generals.classes;
 
 import android.util.Log;
 
-public class  GameDebug {
+// Debugging class. Not used anymore.
+public class GameDebug {
     private String name;
     private long startTime;
 

@@ -1,37 +1,38 @@
 package info.maxmol.generals.Drawing;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.Rect;
+import android.graphics.Region;
 import android.view.MotionEvent;
 
 import info.maxmol.generals.classes.Vec2D;
 
+import static info.maxmol.generals.Drawing.GameDraw.cp;
+
+// This is the most important part of the game. This abstract class is a parent for all game objects you see on screen.
 public abstract class Entity {
     private Vec2D pos = new Vec2D(0, cp(50));
     private Vec2D[] pointsMesh;
-
-    protected static float cp(float pixels) { // Converted Pixels
-        return GameDraw.cp(pixels);
-    }
-
-    protected static float cp(int pixels) {
-        return GameDraw.cp(pixels);
-    }
-
-    protected static double cp(double pixels) {
-        return GameDraw.cp(pixels);
-    }
+    private Path path;
+    private Region region;
+    protected Bitmap bitmap;
+    private boolean valid = true;
+    protected boolean limitMove() {
+        return false;
+    };
 
     public void setPointsMesh(Vec2D[] pts) {
         pointsMesh = pts;
+
+        path = generatePath();
+
+        region = new Region();
+        region.setPath(path, GameDraw.clipRegion);
     }
 
     public Path generatePath() {
-        double posx = getPos().x, posy = getPos().y;
-
         Path path = new Path();
 
         if (pointsMesh == null || pointsMesh.length == 0) {
@@ -40,10 +41,10 @@ public abstract class Entity {
 
         path.setFillType(Path.FillType.EVEN_ODD);
 
-        path.moveTo((float) (posx + pointsMesh[0].x), (float) (posy + pointsMesh[0].y));
+        path.moveTo((float) (pointsMesh[0].x), (float) (pointsMesh[0].y));
 
         for (int i = 1; i < pointsMesh.length; i++) {
-            path.lineTo((float) (posx + pointsMesh[i].x), (float) (posy + pointsMesh[i].y));
+            path.lineTo((float) (pointsMesh[i].x), (float) (pointsMesh[i].y));
         }
 
         path.close();
@@ -51,12 +52,23 @@ public abstract class Entity {
         return path;
     }
 
+    public Path getPath() {
+        return path;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
     protected void drawByPoints(Canvas canvas, Paint p) {
-        if (pointsMesh.length < 3) {
+        if (path == null) {
             return;
         }
 
-        canvas.drawPath(generatePath(), p);
+        canvas.save();
+        canvas.translate((float) getPos().x, (float) getPos().y);
+        canvas.drawPath(path, p);
+        canvas.restore();
     }
 
     public Vec2D getPos() {
@@ -72,20 +84,40 @@ public abstract class Entity {
     public void OnTouch(MotionEvent event) {}
 
     public void Move(Vec2D p) {
-        setPos(getPos().plus(p));
+        Vec2D pos = getPos().plus(p);
+
+        if (limitMove()) {
+            float s = cp(70);
+            pos = Vec2D.Clamp(pos, s, GameDraw.context.ScrW - s, s, GameDraw.context.ScrH - s);
+        }
+
+        setPos(pos);
     }
 
     abstract public void Draw(Canvas canvas);
 
     public void Remove() {
+        valid = false;
         GameDraw.context.entities.remove(this);
+    }
+
+    public boolean isValid() {
+        return valid;
     }
 
     public void takeDamage(int damage) {
         Remove();
     }
 
+    public int getCollisionRadius() {
+        return 0;
+    }
+
     abstract public boolean isPhysicsObject();
 
     abstract public int getZPos();
+
+    public float getAngle() {
+        return 0f;
+    }
 }

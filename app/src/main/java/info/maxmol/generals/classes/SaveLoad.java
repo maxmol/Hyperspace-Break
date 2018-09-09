@@ -2,6 +2,7 @@ package info.maxmol.generals.classes;
 
 import java.io.File;
 
+// Storing game information in a file
 public class SaveLoad {
     public static class SaveLoad_NoFileSpecified extends Exception {
         SaveLoad_NoFileSpecified() {
@@ -12,7 +13,7 @@ public class SaveLoad {
     private static IFile SaveFile;
     private static String splitter = "\n";
 
-    public static void SetSaveFile(String filename) throws IFileExistanceException {
+    public static void SetSaveFile(String filename) throws IFile.IFileExistanceException {
         SaveFile = new IFile(filename);
     }
 

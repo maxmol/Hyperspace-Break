@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -19,9 +21,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import info.maxmol.generals.Drawing.GameDraw;
 import info.maxmol.generals.classes.Game;
 import info.maxmol.generals.classes.SaveLoad;
 import info.maxmol.generals.classes.SaveLoad.SaveLoad_NoFileSpecified;
+import info.maxmol.generals.classes.Stages;
 
 public class GameActivity extends Activity {
 
@@ -37,9 +41,11 @@ public class GameActivity extends Activity {
 
     private ArrayList<LinearLayout> panel3_blocks = new ArrayList<>();
     private ArrayList<Button> panel3_btns = new ArrayList<>();
+    private ArrayList<TextView> panel3_counts = new ArrayList<>();
     private ArrayList<TextView> panel3_costs = new ArrayList<>();
 
     private Integer currentPanel = 0;
+    public boolean pressedButton = false;
 
     public void setCurrentPanel(int id) {
         if (id == currentPanel) return;
@@ -51,8 +57,8 @@ public class GameActivity extends Activity {
     }
 
     public void panel2_updateBlock(int id, int val) {
-        panel2_levels.get(id).setText(getResources().getString(R.string.level) + " " + val);
-        panel2_costs.get(id).setText(Game.formatMoney(Game.getUpgradeCost(val)));
+        panel2_levels.get(id).setText((val < 5) ? (getResources().getString(R.string.level) + " " + val) : "MAX");
+        panel2_costs.get(id).setText((val < 5) ? Game.formatMoney(Game.getUpgradeCost(val)) : "LEVEL");
 
         if (Game.getMoney() < Game.getUpgradeCost(val)) {
             panel2_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
@@ -64,10 +70,11 @@ public class GameActivity extends Activity {
         }
     }
 
-    public void panel3_updateBlock(int id, int val) {
-        panel3_costs.get(id).setText(Game.formatMoney(val));
+    public void panel3_updateBlock(int id, int cost, Integer count) {
+        if (count != null) panel3_counts.get(id).setText("You Have: " + " " + count);
+        panel3_costs.get(id).setText(Game.formatMoney(cost));
 
-        if (Game.getMoney() < val) {
+        if (Game.getMoney() < cost) {
             panel3_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
             panel3_btns.get(id).setText("NOT ENOUGH");
         }
@@ -80,10 +87,10 @@ public class GameActivity extends Activity {
     public void panel2_updateBlocks() {
         panel2_updateBlock(0, Game.MaxHealthLevel);
         panel2_updateBlock(1, Game.AttackLevel);
-        panel2_updateBlock(2, Game.DefenceLevel);
+        panel2_updateBlock(2, Game.BombLevel);
         panel2_updateBlock(3, Game.CritLevel);
 
-        panel3_updateBlock(0, Game.getMaxHealth());
+        panel3_updateBlock(0, Game.LaserAttackCost, Game.LaserAttackCount);
     }
 
     public static int dp(float dp) {
@@ -102,7 +109,6 @@ public class GameActivity extends Activity {
     public static int generateViewId() {
         for (;;) {
             final int result = sNextGeneratedId.get();
-            // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
             int newValue = result + 1;
             if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
             if (sNextGeneratedId.compareAndSet(result, newValue)) {
@@ -125,7 +131,6 @@ public class GameActivity extends Activity {
         if (panel2_blocks.size() > 0) {
             rp.setMargins(0, dp(14), 0, 0);
             rp.addRule(RelativeLayout.BELOW, panel2_blocks.get(panel2_blocks.size() - 1).getId());
-            System.out.println(panel2_blocks.get(panel2_blocks.size() - 1).getId());
         }
 
         game_panel_1_block_1.setLayoutParams(rp);
@@ -169,12 +174,12 @@ public class GameActivity extends Activity {
 
         Button game_panel_1_block_1_btn = new Button(this);
         game_panel_1_block_1_btn.setBackgroundColor(Color.rgb(64, 196, 96));
-        game_panel_1_block_1_btn.setTextSize(dp(5));
+        game_panel_1_block_1_btn.setTextSize(dp(10));
         game_panel_1_block_1_btn.setTextColor(Color.WHITE);
         game_panel_1_block_1_btn.setText("UPGRADE");
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(40));
+                dp(80));
         lp.setMargins(0, dp(10), 0, 0);
         game_panel_1_block_1_btn.setLayoutParams(lp);
         game_panel_1_block_1.addView(game_panel_1_block_1_btn);
@@ -198,7 +203,6 @@ public class GameActivity extends Activity {
         if (panel3_blocks.size() > 0) {
             rp.setMargins(0, dp(14), 0, 0);
             rp.addRule(RelativeLayout.BELOW, panel3_blocks.get(panel3_blocks.size() - 1).getId());
-            System.out.println(panel3_blocks.get(panel3_blocks.size() - 1).getId());
         }
 
         game_panel_1_block_1.setLayoutParams(rp);
@@ -216,6 +220,18 @@ public class GameActivity extends Activity {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
         game_panel_1_block_1.addView(game_panel_1_block_1_title);
 
+        TextView game_panel_1_block_1_count = new TextView(this);
+        game_panel_1_block_1_count.setText("");
+        game_panel_1_block_1_count.setTextSize(dp(8));
+        game_panel_1_block_1_count.setGravity(Gravity.CENTER);
+        game_panel_1_block_1_count.setTextColor(Color.WHITE);
+        game_panel_1_block_1_count.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        game_panel_1_block_1.addView(game_panel_1_block_1_count);
+
+        panel3_counts.add(game_panel_1_block_1_count);
+
         TextView game_panel_1_block_1_cost = new TextView(this);
         game_panel_1_block_1_cost.setText("0");
         game_panel_1_block_1_cost.setTextSize(dp(8));
@@ -230,7 +246,7 @@ public class GameActivity extends Activity {
 
         Button game_panel_1_block_1_btn = new Button(this);
         game_panel_1_block_1_btn.setBackgroundColor(Color.rgb(64, 196, 96));
-        game_panel_1_block_1_btn.setTextSize(dp(5));
+        game_panel_1_block_1_btn.setTextSize(dp(10));
         game_panel_1_block_1_btn.setTextColor(Color.WHITE);
         game_panel_1_block_1_btn.setText("BUY");
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -288,7 +304,7 @@ public class GameActivity extends Activity {
         panelButtons[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.getHealth() <= 0) {
+                /*if (Game.getHealth() <= 0) {
                     new AlertDialog.Builder(context)
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .setTitle("Your ship is destoyed!")
@@ -296,14 +312,17 @@ public class GameActivity extends Activity {
                             .setPositiveButton("Continue", null)
                             .show();
                 }
-                else {
+                else {*/
+                if (Game.getStage() <= Stages.COUNT) {
                     new AlertDialog.Builder(context)
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("Stage " + Game.getStep())
+                            .setTitle("Stage " + Game.getStage())
                             .setMessage("Are you sure you want to start this stage?")
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    pressedButton = true;
+
                                     Intent intent = new Intent(context, FightActivity.class);
                                     startActivityForResult(intent, 0);
                                 }
@@ -312,20 +331,52 @@ public class GameActivity extends Activity {
                             .setNegativeButton("Close", null)
                             .show();
                 }
+                else {
+                    new AlertDialog.Builder(context)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("FreeMode")
+                            .setMessage("You have completed the game! Now you can play in FreeMode.")
+                            .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    pressedButton = true;
+
+                                    Intent intent = new Intent(context, FightActivity.class);
+                                    startActivityForResult(intent, 0);
+                                }
+
+                            })
+                            .setNegativeButton("Close", null)
+                            .show();
+                }
+                //}
             }
         });
 
         // ----
 
+        final SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        final int button10 = soundPool.load(getApplicationContext(), R.raw.button10, 1);
+        final int blip1 = soundPool.load(getApplicationContext(), R.raw.blip1, 1);
+
         panel2_createBlock("Max Health", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Game.MaxHealthLevel >= 5) {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
+                    return;
+                }
+
                 Integer needMoney = Game.getUpgradeCost(Game.MaxHealthLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
                     int lasthealth = Game.getMaxHealth();
                     Game.MaxHealthLevel++;
                     Game.setHealth(Game.getHealth() + Game.getMaxHealth() - lasthealth);
+                    soundPool.play(blip1, 1, 1, 0, 0, 1);
+                }
+                else {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
 
                 panel2_updateBlocks();
@@ -334,47 +385,77 @@ public class GameActivity extends Activity {
         panel2_createBlock("Attack", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Game.AttackLevel >= 5) {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
+                    return;
+                }
+
                 Integer needMoney = Game.getUpgradeCost(Game.AttackLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
                     Game.AttackLevel++;
+                    soundPool.play(blip1, 1, 1, 0, 0, 1);
+                }
+                else {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
 
                 panel2_updateBlocks();
             }
         });
-        panel2_createBlock("Defence", new View.OnClickListener() {
+        panel2_createBlock("Laser Beam", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Integer needMoney = Game.getUpgradeCost(Game.DefenceLevel);
+                if (Game.BombLevel >= 5) {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
+                    return;
+                }
+
+                Integer needMoney = Game.getUpgradeCost(Game.BombLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
-                    Game.DefenceLevel++;
+                    Game.BombLevel++;
+                    soundPool.play(blip1, 1, 1, 0, 0, 1);
+                }
+                else {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
 
                 panel2_updateBlocks();
             }
         });
-        panel2_createBlock("Crit Chance", new View.OnClickListener() {
+        panel2_createBlock("Energy Ball", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (Game.CritLevel >= 5) {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
+                    return;
+                }
+
                 Integer needMoney = Game.getUpgradeCost(Game.CritLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
                     Game.CritLevel++;
+                    soundPool.play(blip1, 1, 1, 0, 0, 1);
+                }
+                else {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
 
                 panel2_updateBlocks();
             }
         });
 
-        panel3_createBlock("Full Health", new View.OnClickListener() {
+        panel3_createBlock("Laser Attack", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Integer needMoney = Game.getMaxHealth();
-                if (Game.getMoney() >= needMoney) {
-                    Game.takeMoney(needMoney);
-                    Game.setHealth(Game.getMaxHealth());
+                if (Game.getMoney() >= Game.LaserAttackCost) {
+                    Game.LaserAttackCount++;
+                    Game.takeMoney(Game.LaserAttackCost);
+                    soundPool.play(blip1, 1, 1, 0, 0, 1);
+                }
+                else {
+                    soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
 
                 panel2_updateBlocks();
@@ -388,8 +469,14 @@ public class GameActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        Game.setMoney(Game.getMoney());
         panel2_updateBlocks();
+
+        if (MainMenu.menu_theme != null && !MainMenu.menu_theme.isPlaying()) {
+            MainMenu.menu_theme.start();
+        }
+
+        Game.moneyTextView.setText(Game.formatMoney(Game.getMoney()));
+        Game.moneyTextView.setText(Game.formatMoney(Game.getMoney()));
     }
 
     @Override
@@ -401,5 +488,16 @@ public class GameActivity extends Activity {
         } catch (SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
             saveLoad_noFileSpecified.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (!this.isFinishing() && !pressedButton && MainMenu.menu_theme != null) {
+            MainMenu.menu_theme.pause();
+        }
+
+        pressedButton = false;
     }
 }

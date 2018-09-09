@@ -4,22 +4,45 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.media.AudioManager;
+import android.media.SoundPool;
 
+import info.maxmol.generals.R;
+import info.maxmol.generals.classes.Stages;
 import info.maxmol.generals.classes.Vec2D;
 
-public class Coin extends Entity {
-    public Vec2D velocity;
+import static info.maxmol.generals.Drawing.GameDraw.cp;
+
+public class Coin extends Pickable {
     public int count = 1;
-    public static final int radius = (int) cp(20);
+    private SoundPool soundPool;
+    private int coinSound;
 
-    public Coin() {
-
+    public void initVars() {
+        pickableText = "¤";
+        pickableColor = Color.rgb(32, 255, 32);
     }
 
     public Coin(int count, Vec2D vec2D) {
+        super(vec2D);
         setCount(count);
-        setPos(vec2D);
-        velocity = Vec2D.random().mul(cp(10.0));
+
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        coinSound = soundPool.load(GameDraw.context.getContext(), R.raw.blip1, 1);
+        initVars();
+    }
+
+    public Coin() {
+        super();
+        initVars();
+    }
+
+    public void collect() {
+        if (this.getCount() != -1) {
+            Stages.collectMoney(this.getCount());
+            soundPool.play(coinSound, 0.5f, 0.5f, 0, 0, 0.8f);
+            super.collect();
+        }
     }
 
     public int getCount() {
@@ -28,56 +51,5 @@ public class Coin extends Entity {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    @Override
-    public void Tick() {
-        if (velocity.x > 1 || velocity.y > 1) {
-            velocity.multiply(0.9);
-        }
-        else velocity = Vec2D.zero;
-
-        Move(velocity.plus(new Vec2D(0, cp(2))));
-    }
-
-    @Override
-    public void Draw(Canvas canvas) {
-        Paint p = new Paint();
-        p.setColor(Color.GREEN);
-
-        double posx = getPos().x, posy = getPos().y;
-        canvas.drawRect(
-                (float) (posx - radius),
-                (float) (posy - radius),
-                (float) (posx + radius),
-                (float) (posy + radius),
-                p);
-    }
-
-    @Override
-    public Path generatePath() {
-        double posx = getPos().x, posy = getPos().y;
-
-        Path path = new Path();
-
-        path.setFillType(Path.FillType.EVEN_ODD);
-
-        path.moveTo((float) (posx - radius), (float) (posy - radius));
-        path.lineTo((float) (posx + radius), (float) (posy - radius));
-        path.lineTo((float) (posx + radius), (float) (posy + radius));
-        path.lineTo((float) (posx - radius), (float) (posy + radius));
-        path.close();
-
-        return path;
-    }
-
-    @Override
-    public boolean isPhysicsObject() {
-        return false;
-    }
-
-    @Override
-    public int getZPos() {
-        return 0;
     }
 }
