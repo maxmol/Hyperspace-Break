@@ -2,10 +2,13 @@ package maxmol.igp;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -42,9 +45,11 @@ public class SelectLevel extends AppCompatActivity {
             Button continue_button = new Button(this);
 
             continue_button.setText(finalI == Stages.COUNT + 1 ? "FreeMode" : finalI.toString());
+            continue_button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
+            continue_button.setTypeface(ResourcesCompat.getFont(this, R.font.unlearn2));
 
             GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-            layoutParams.width = finalI == Stages.COUNT + 1 ? btnSize * 2 : btnSize;
+            layoutParams.width = finalI == Stages.COUNT + 1 ? btnSize * 3 : btnSize;
             layoutParams.height = btnSize;
             layoutParams.setMargins(margin, margin, margin, margin);
             continue_button.setLayoutParams(layoutParams);

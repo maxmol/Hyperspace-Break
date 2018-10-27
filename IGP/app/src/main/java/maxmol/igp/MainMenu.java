@@ -100,7 +100,6 @@ public class MainMenu extends Activity {
         moneyView.setText(Game.formatMoney(Game.getMoney()));
 
         Button button_reset = (Button) findViewById(R.id.mainmenu_resetprogress);
-        button_reset.setBackgroundColor(Color.rgb(255, 32, 32));
         button_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

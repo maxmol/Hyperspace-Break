@@ -18,8 +18,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12pt"
+            android:textSize="40sp"
             android:text="Select Level"
+            android:fontFamily="@font/unlearn2"
             android:textColor="@android:color/white"
             android:id="@+id/selectLevel_appName"
             android:textAlignment="center"/>
