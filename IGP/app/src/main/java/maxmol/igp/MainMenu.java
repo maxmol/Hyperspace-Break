@@ -5,9 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -41,6 +44,9 @@ public class MainMenu extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         context = this;
 
@@ -76,6 +82,7 @@ public class MainMenu extends Activity {
 
         Button button_newgame = (Button) findViewById(R.id.mainmenu_newgame);
         Button button_continue = (Button) findViewById(R.id.mainmenu_continue);
+        Button button_settings = (Button) findViewById(R.id.mainmenu_settings);
 
         button_newgame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,35 +103,17 @@ public class MainMenu extends Activity {
             }
         });
 
-        final TextView moneyView = (TextView) findViewById(R.id.mainmenu_money);
-        moneyView.setText(Game.formatMoney(Game.getMoney()));
-
-        Button button_reset = (Button) findViewById(R.id.mainmenu_resetprogress);
-        button_reset.setOnClickListener(new View.OnClickListener() {
+        button_settings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(context)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Remove all progress")
-                        .setMessage("Are you sure you want to reset all progress you made?")
-                        .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Game.reset();
-                                try {
-                                    SaveLoad.Save();
-                                } catch (SaveLoad.SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
-                                    saveLoad_noFileSpecified.printStackTrace();
-                                }
-
-                                moneyView.setText(Game.formatMoney(Game.getMoney()));
-                            }
-
-                        })
-                        .setNegativeButton("Close", null)
-                        .show();
+                pressedButton = true;
+                Intent intent = new Intent(context, SettingsActivity.class);
+                startActivity(intent);
             }
         });
+
+        final TextView moneyView = findViewById(R.id.mainmenu_money);
+        moneyView.setText(Game.formatMoney(Game.getMoney()));
     }
 
     @Override

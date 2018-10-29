@@ -7,34 +7,44 @@
     android:orientation="vertical"
     tools:context="maxmol.igp.GameActivity">
 
+    <maxmol.igp.StarsBackground
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:id="@+id/game_buttons"
-        android:background="@color/colorPrimaryDark">
+        android:background="@color/dark">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14dp"
-            android:text="Your ship"
+            android:textSize="14sp"
+            android:text="UPGRADE"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_1_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:text="Store"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_2_button"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="14dp"
+            android:textSize="14sp"
             android:text="Start"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_3_button"/>
     </LinearLayout>
 
@@ -77,7 +87,7 @@
         android:orientation="horizontal"
         android:padding="5dp"
         android:id="@+id/gamestats_layout"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/dark"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
@@ -86,7 +96,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/gamestats_money"
-            android:textSize="18dp"
+            android:textSize="20sp"
+            android:fontFamily="@font/unlearn2"
             android:textColor="@android:color/white"/>
     </GridLayout>
 </RelativeLayout>

@@ -6,6 +6,8 @@ import android.media.MediaPlayer;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Window;
+import android.view.WindowManager;
+
 import maxmol.igp.Drawing.GameDraw;
 
 /*
@@ -37,6 +39,9 @@ public class FlightActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         context = this;
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);

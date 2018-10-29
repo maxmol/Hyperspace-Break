@@ -93,7 +93,7 @@ public class SuperButton extends SuperVGUI {
         Rect textBounds = new Rect();
         p.getTextBounds(text, 0, text.length(), textBounds);
 
-        canvas.drawText(text, (float) getPos().x - textBounds.width()/2, (float) getPos().y + textBounds.height()/2, p);
+        canvas.drawText(text, (float) getPos().x - textBounds.exactCenterX(), (float) getPos().y - textBounds.exactCenterY(), p);
     }
 
     @Override

@@ -5,11 +5,14 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -29,6 +32,9 @@ public class SelectLevel extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_level);
 
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         context = this;
 
         GridLayout selectLevels = (GridLayout) findViewById(R.id.select_levels);
@@ -42,34 +48,37 @@ public class SelectLevel extends AppCompatActivity {
 
         for (int i = 1; i <= Stages.COUNT + 1; i++) {
             final Integer finalI = i;
-            Button continue_button = new Button(this);
+            int style = android.R.style.Widget_Material_Button_Colored;
+            Button continue_button;
+
+            if (i < Game.getStep()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
+                    continue_button = new Button(this, null, style, style);
+                else
+                    continue_button = new Button(this, null, style);
+            }
+            else
+                continue_button = new Button(this);
+
 
             continue_button.setText(finalI == Stages.COUNT + 1 ? "FreeMode" : finalI.toString());
             continue_button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
             continue_button.setTypeface(ResourcesCompat.getFont(this, R.font.unlearn2));
 
             GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-            layoutParams.width = finalI == Stages.COUNT + 1 ? btnSize * 3 : btnSize;
+            layoutParams.width = finalI == Stages.COUNT + 1 ? btnSize * 4 : btnSize;
             layoutParams.height = btnSize;
             layoutParams.setMargins(margin, margin, margin, margin);
             continue_button.setLayoutParams(layoutParams);
 
-            int bgColor;
-
-            if (i < Game.getStep()) {
-                bgColor = Color.rgb(0, 255, 64);
+            if (i > Game.getStep()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    continue_button.setBackgroundTintList(ContextCompat.getColorStateList(SelectLevel.this, R.color.button_material_dark));
+                }
+                else {
+                    continue_button.setBackgroundColor(Color.rgb(64, 64, 64));
+                }
             }
-            else if (i == Game.getStep()) {
-                if (i == Stages.COUNT + 1)
-                    bgColor = Color.rgb(255, 255, 64);
-                else
-                    bgColor = Color.rgb(196, 196, 196);
-            }
-            else {
-                bgColor = Color.rgb(64, 64, 64);
-            }
-
-            continue_button.setBackgroundColor(bgColor);
 
             continue_button.setOnClickListener(new View.OnClickListener() {
                 @Override

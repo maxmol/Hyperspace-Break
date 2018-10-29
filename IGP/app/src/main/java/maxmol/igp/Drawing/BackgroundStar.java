@@ -30,7 +30,7 @@ public class BackgroundStar extends Entity {
     public BackgroundStar() {
         setPos(new Vec2D(Math.random() * GameDraw.context.ScrH, -5));
         distance = (float) MUtil.Clamp(Math.random(), 0.6, 1);
-        circleRadius = cp(10) * (1 - distance);
+        circleRadius = cp(20) * (1 - distance);
 
         initPaint();
     }
@@ -38,7 +38,7 @@ public class BackgroundStar extends Entity {
     public BackgroundStar(StarsBackground fromView) {
         setPos(new Vec2D(Math.random() * (fromView != null ? fromView.getHeight() : GameDraw.context.ScrH), -5));
         distance = (float) MUtil.Clamp(Math.random(), 0.6, 1);
-        circleRadius = cp(10) * (1 - distance);
+        circleRadius = cp(20) * (1 - distance);
 
         this.fromView = fromView;
 
@@ -49,7 +49,7 @@ public class BackgroundStar extends Entity {
         setPos(vec2D);
         distance = (float) MUtil.Clamp(Math.random(), 0.6, 0.9);
 
-        circleRadius = cp(10) * (1 - distance);
+        circleRadius = cp(20) * (1 - distance);
 
         initPaint();
     }
@@ -65,7 +65,8 @@ public class BackgroundStar extends Entity {
 
     @Override
     public void Draw(Canvas canvas) {
-        canvas.drawCircle((float) getPos().x, (float) getPos().y, circleRadius, starPaint);
+        //canvas.drawCircle((float) getPos().x, (float) getPos().y, circleRadius, starPaint);
+        canvas.drawRect((float) getPos().x - circleRadius/2, (float) getPos().y - circleRadius/2, (float) getPos().x + circleRadius/2, (float) getPos().y + circleRadius/2, starPaint);
     }
 
     @Override

@@ -4,14 +4,20 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -54,6 +60,7 @@ public class GameActivity extends Activity {
 
     private Integer currentPanel = 0;
     public boolean pressedButton = false;
+    private Typeface font;
 
     // change the focused panel after pressing "Upgrades", "Shop" buttons
     public void setCurrentPanel(int id) {
@@ -71,11 +78,21 @@ public class GameActivity extends Activity {
         panel2_costs.get(id).setText((val < 5) ? Game.formatMoney(Game.getUpgradeCost(val)) : "LEVEL");
 
         if (Game.getMoney() < Game.getUpgradeCost(val)) {
-            panel2_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                panel2_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.colorAccent));
+            }
+            else {
+                panel2_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
+            }
             panel2_btns.get(id).setText("NOT ENOUGH");
         }
         else {
-            panel2_btns.get(id).setBackgroundColor(Color.rgb(64, 196, 96));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                panel2_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.material_deep_teal_200));
+            }
+            else {
+                panel2_btns.get(id).setBackgroundColor(Color.rgb(64, 196, 96));
+            }
             panel2_btns.get(id).setText("UPGRADE");
         }
     }
@@ -86,11 +103,21 @@ public class GameActivity extends Activity {
         panel3_costs.get(id).setText(Game.formatMoney(cost));
 
         if (Game.getMoney() < cost) {
-            panel3_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                panel3_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.colorAccent));
+            }
+            else {
+                panel3_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
+            }
             panel3_btns.get(id).setText("NOT ENOUGH");
         }
         else {
-            panel3_btns.get(id).setBackgroundColor(Color.rgb(64, 196, 96));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                panel3_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.material_deep_teal_200));
+            }
+            else {
+                panel3_btns.get(id).setBackgroundColor(Color.rgb(64, 196, 96));
+            }
             panel3_btns.get(id).setText("BUY");
         }
     }
@@ -107,14 +134,14 @@ public class GameActivity extends Activity {
 
     // I used this function to make the app look same on different devices
     public static int dp(float dp) {
-        /*DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         float fpixels = metrics.density * dp;
-        int pixels = (int) (fpixels + 0.5f);*/
-        dp = dp * 2;
+        int pixels = (int) (fpixels + 0.5f);
+        //dp = dp * 2;
         //System.out.println(context.getResources().getSystem().getDisplayMetrics().density);
-        return (int) dp;
+        //return (int) dp;
 
-        //return pixels;
+        return pixels;
     }
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
@@ -131,13 +158,25 @@ public class GameActivity extends Activity {
         }
     }
 
+    // unified format for textviews and buttons
+    public void uniformat(TextView view) {
+        view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        view.setTypeface(font);
+        view.setGravity(Gravity.CENTER);
+        view.setTextColor(Color.BLACK);
+        view.setTextColor(Color.rgb(240, 240, 240));
+        view.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+    }
+
     // create menu type 2
     public void panel2_createBlock(String title, View.OnClickListener onClickListener) {
         LinearLayout game_panel_1_block_1 = new LinearLayout(this);
         game_panel_1_block_1.setOrientation(LinearLayout.VERTICAL);
 
         game_panel_1_block_1.setDividerPadding(dp(16));
-        game_panel_1_block_1.setBackgroundColor(Color.rgb(64, 96, 200));
+        game_panel_1_block_1.setBackgroundColor(Color.rgb(0, 150, 136));
         game_panel_1_block_1.setId(generateViewId());
 
         RelativeLayout.LayoutParams rp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -155,48 +194,31 @@ public class GameActivity extends Activity {
 
         TextView game_panel_1_block_1_title = new TextView(this);
         game_panel_1_block_1_title.setText(title);
-        game_panel_1_block_1_title.setTextSize(dp(12));
-        game_panel_1_block_1_title.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_title.setTextColor(Color.WHITE);
-        game_panel_1_block_1_title.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_title);
         game_panel_1_block_1.addView(game_panel_1_block_1_title);
 
         TextView game_panel_1_block_1_level = new TextView(this);
         game_panel_1_block_1_level.setText("LEVEL 1");
-        game_panel_1_block_1_level.setTextSize(dp(8));
-        game_panel_1_block_1_level.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_level.setTextColor(Color.WHITE);
-        game_panel_1_block_1_level.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_level);
         game_panel_1_block_1.addView(game_panel_1_block_1_level);
 
         panel2_levels.add(game_panel_1_block_1_level);
 
         TextView game_panel_1_block_1_cost = new TextView(this);
         game_panel_1_block_1_cost.setText("0");
-        game_panel_1_block_1_cost.setTextSize(dp(8));
-        game_panel_1_block_1_cost.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_cost.setTextColor(Color.WHITE);
-        game_panel_1_block_1_cost.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_cost);
         game_panel_1_block_1.addView(game_panel_1_block_1_cost);
 
         panel2_costs.add(game_panel_1_block_1_cost);
 
         Button game_panel_1_block_1_btn = new Button(this);
-        game_panel_1_block_1_btn.setBackgroundColor(Color.rgb(64, 196, 96));
-        game_panel_1_block_1_btn.setTextSize(dp(10));
-        game_panel_1_block_1_btn.setTextColor(Color.WHITE);
-        game_panel_1_block_1_btn.setText("UPGRADE");
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(80));
-        lp.setMargins(0, dp(10), 0, 0);
-        game_panel_1_block_1_btn.setLayoutParams(lp);
+        //game_panel_1_block_1_btn.setBackgroundColor(Color.rgb(64, 196, 96));
+        uniformat(game_panel_1_block_1_btn);
+        //LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+        //        ViewGroup.LayoutParams.MATCH_PARENT,
+        //        dp(50));
+        //lp.setMargins(0, dp(10), 0, 0);
+        //game_panel_1_block_1_btn.setLayoutParams(lp);
         game_panel_1_block_1.addView(game_panel_1_block_1_btn);
 
         game_panel_1_block_1_btn.setOnClickListener(onClickListener);
@@ -208,9 +230,8 @@ public class GameActivity extends Activity {
     public void panel3_createBlock(String title, View.OnClickListener onClickListener) {
         LinearLayout game_panel_1_block_1 = new LinearLayout(this);
         game_panel_1_block_1.setOrientation(LinearLayout.VERTICAL);
-
         game_panel_1_block_1.setDividerPadding(dp(16));
-        game_panel_1_block_1.setBackgroundColor(Color.rgb(64, 96, 200));
+        game_panel_1_block_1.setBackgroundColor(Color.rgb(0, 150, 136));
         game_panel_1_block_1.setId(generateViewId());
 
         RelativeLayout.LayoutParams rp = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -228,46 +249,29 @@ public class GameActivity extends Activity {
 
         TextView game_panel_1_block_1_title = new TextView(this);
         game_panel_1_block_1_title.setText(title);
-        game_panel_1_block_1_title.setTextSize(dp(12));
-        game_panel_1_block_1_title.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_title.setTextColor(Color.WHITE);
-        game_panel_1_block_1_title.setLayoutParams(new ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_title);
         game_panel_1_block_1.addView(game_panel_1_block_1_title);
 
         TextView game_panel_1_block_1_count = new TextView(this);
         game_panel_1_block_1_count.setText("");
-        game_panel_1_block_1_count.setTextSize(dp(8));
-        game_panel_1_block_1_count.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_count.setTextColor(Color.WHITE);
-        game_panel_1_block_1_count.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_count);
         game_panel_1_block_1.addView(game_panel_1_block_1_count);
 
         panel3_counts.add(game_panel_1_block_1_count);
 
         TextView game_panel_1_block_1_cost = new TextView(this);
         game_panel_1_block_1_cost.setText("0");
-        game_panel_1_block_1_cost.setTextSize(dp(8));
-        game_panel_1_block_1_cost.setGravity(Gravity.CENTER);
-        game_panel_1_block_1_cost.setTextColor(Color.WHITE);
-        game_panel_1_block_1_cost.setLayoutParams(new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT));
+        uniformat(game_panel_1_block_1_cost);
         game_panel_1_block_1.addView(game_panel_1_block_1_cost);
 
         panel3_costs.add(game_panel_1_block_1_cost);
 
         Button game_panel_1_block_1_btn = new Button(this);
-        game_panel_1_block_1_btn.setBackgroundColor(Color.rgb(64, 196, 96));
-        game_panel_1_block_1_btn.setTextSize(dp(10));
-        game_panel_1_block_1_btn.setTextColor(Color.WHITE);
+        uniformat(game_panel_1_block_1_btn);
         game_panel_1_block_1_btn.setText("BUY");
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(80));
+                dp(50));
         lp.setMargins(0, dp(10), 0, 0);
         game_panel_1_block_1_btn.setLayoutParams(lp);
         game_panel_1_block_1.addView(game_panel_1_block_1_btn);
@@ -284,6 +288,11 @@ public class GameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        font = ResourcesCompat.getFont(this, R.font.sabofilled);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         context = this;
 

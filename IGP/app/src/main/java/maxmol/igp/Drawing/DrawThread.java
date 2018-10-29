@@ -4,11 +4,14 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.SurfaceHolder;
 
 import maxmol.igp.FlightActivity;
 import maxmol.igp.GameActivity;
+import maxmol.igp.R;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.MUtil;
 import maxmol.igp.classes.Stages;
@@ -17,7 +20,7 @@ import maxmol.igp.classes.Stages;
 public class DrawThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private boolean running = true;
-    public static final int interval = 20;
+    public static final int interval = 25;
     public long sysTime;
     private int dieCounter = 50; // Wait a bit before creating a dialog window
 
@@ -96,7 +99,7 @@ public class DrawThread extends Thread {
 
             Paint p = new Paint();
             p.setAntiAlias(true);
-            p.setColor(Color.rgb(0, 0, 64));
+            p.setColor(Color.rgb(0, 0, 0));
             canvas.drawPaint(p);
 
             if (GameDraw.context.shouldSort) {
@@ -112,10 +115,12 @@ public class DrawThread extends Thread {
             }
 
             p.setColor(Color.WHITE);
-            p.setTextSize(cp(42));
-            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(10), cp(40), p);
-            p.setColor(Color.GREEN);
+            p.setTypeface(ResourcesCompat.getFont(FlightActivity.context, R.font.unlearn2));
+            p.setTextSize(cp(80));
+            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(25), cp(80), p);
 
+            /*
+            p.setColor(Color.GREEN);
             try {
                 canvas.drawRect(
                         0f,
@@ -125,7 +130,7 @@ public class DrawThread extends Thread {
             }
             catch (ArithmeticException e) {
 
-            }
+            }*/
 
             // --- Pause ---
 
@@ -133,6 +138,7 @@ public class DrawThread extends Thread {
                 p.setColor(Color.WHITE);
                 p.setTextSize(cp(64));
                 p.setTextAlign(Paint.Align.CENTER);
+                p.setTypeface(ResourcesCompat.getFont(FlightActivity.context, R.font.unlearn2));
                 canvas.drawText("Paused", GameDraw.context.ScrW / 2, cp(120), p);
             }
 

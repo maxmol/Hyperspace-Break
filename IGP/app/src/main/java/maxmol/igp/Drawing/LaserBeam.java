@@ -3,6 +3,8 @@ package maxmol.igp.Drawing;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Region;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -70,34 +72,43 @@ public class LaserBeam extends Entity {
             Remove();
         }
 
-        if (getOwner() instanceof Enemy) entityHit(GameDraw.context.ship);
+        Vec2D directional = new Vec2D(0, length).GetRotated(angle - 90);
+        Vec2D right = new Vec2D(wide, 0).GetRotated(angle - 90);
+
+        setPointsMesh(new Vec2D[]{
+                getPos().plus(right),
+                getPos().minus(right),
+                getPos().plus(directional).minus(right),
+                getPos().plus(directional).plus(right),
+        });
+
+        length = GameDraw.context.ScrH;
+
+        if (getOwner() instanceof Enemy) {
+            entityHit(GameDraw.context.ship);
+        }
         else {
             for (Entity e : GameDraw.context.getEntities()) {
                 if (!e.isPhysicsObject()) continue;
                 if (this.getOwner() == e) continue;
-                entityHit(e);
+
+                if (entityHit(e)) {
+                    break;
+                }
             }
         }
     }
 
-    // Not the best way to find intersections... I'm 15 tho.
-    private void entityHit(Entity e) {
-        Region eReg = e.getRegion();
-
-        double entX = e.getPos().x, entY = e.getPos().y;
-        int len = MUtil.Clamp((int) e.getPos().minus(getPos()).Length() - e.getCollisionRadius(), 0);
-        double endLen = e.getPos().minus(getPos()).Length() + e.getCollisionRadius();
-        while (len < endLen) {
-            int x = (int) (getPos().x + Math.cos(Math.toRadians(angle)) * len - entX), y = (int) (getPos().y + Math.sin(Math.toRadians(angle)) * len - entY);
-            if (eReg.contains(x, y)) {
-                length = len;
-                e.takeDamage(1);
-                GameDraw.context.AddEntity(new SparksEffect(new Vec2D(x + entX, y + entY), (int) (Math.random() * 3) + 1, 1, 0, 5, 1, Color.rgb(255, 196, 64)));
-                return;
-            }
-
-            len += cp(4);
+    private boolean entityHit(Entity e) {
+        if (getRegion().contains((int)e.getPos().x, (int)e.getPos().y)) {
+            float len = (float) Math.abs(e.getPos().Distance(getPos()));
+            if (len < length) length = len;
+            e.takeDamage(1);
+            GameDraw.context.AddEntity(new SparksEffect(e.getPos(), (int) (Math.random() * 3) + 1, 1, 0, 5, 1, Color.rgb(255, 196, 64)));
+            return true;
         }
+
+        return false;
     }
 
     @Override

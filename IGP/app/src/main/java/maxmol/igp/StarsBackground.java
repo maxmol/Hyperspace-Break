@@ -67,7 +67,7 @@ public class StarsBackground extends View {
         }
 
         Paint p = new Paint();
-        p.setColor(Color.rgb(0, 0, 64));
+        p.setColor(Color.rgb(0, 0, 0));
         canvas.drawPaint(p);
 
         if (Math.random() < BackgroundStar.SPAWN_CHANCE) {

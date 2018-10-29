@@ -12,6 +12,9 @@ public class Game {
     public static Integer BombLevel;
     public static Integer AttackLevel;
     public static Integer CritLevel;
+    public static Integer Difficulty;
+
+    public static CharSequence[] Difficulties = new CharSequence[]{"Easy", "Normal", "Hard"};
 
     public static Integer LaserAttackCost = 50;
     public static Integer LaserAttackCount;
@@ -32,10 +35,12 @@ public class Game {
         CritLevel = 0;
 
         LaserAttackCount = 0;
+
+        Difficulty = 0;
     }
 
     public static Object[] GetTable() {
-        return new Object[] {Step, Money, MaxHealthLevel, BombLevel, AttackLevel, CritLevel, LaserAttackCount};
+        return new Object[] {Step, Money, MaxHealthLevel, BombLevel, AttackLevel, CritLevel, LaserAttackCount, Difficulty};
     }
 
 
@@ -50,6 +55,7 @@ public class Game {
         AttackLevel = Integer.parseInt(tbl[4]);
         CritLevel = Integer.parseInt(tbl[5]);
         LaserAttackCount = Integer.parseInt(tbl[6]);
+        Difficulty = Integer.parseInt(tbl[7]);
 
         setStep(Integer.parseInt(tbl[0]));
         setMoney(Integer.parseInt(tbl[1]));
@@ -136,6 +142,6 @@ public class Game {
     }
 
     public static Integer getMaxHealth() {
-        return 100 + MaxHealthLevel * 25;
+        return 50 + MaxHealthLevel * 20;
     }
 }

@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.view.MotionEvent;
 
+import maxmol.igp.FlightActivity;
 import maxmol.igp.R;
 import maxmol.igp.classes.BulletGenerator;
 import maxmol.igp.classes.Game;
@@ -56,9 +57,12 @@ public class Ship extends Entity {
     private int coinSound;
     private Vec2D direction = new Vec2D(0, -1);
     public DPad movePad;//, rotatePad;
-    private double speed = cp(20);
+    private double speed = cp(25);
     private float angle = 0;
     private long soundCoolDown = 0;
+    private Bitmap[] bitmaps = new Bitmap[6];
+    private int curBitmap = 0;
+    private long cooldown = 0;
 
     @Override
     protected boolean limitMove() {
@@ -76,22 +80,15 @@ public class Ship extends Entity {
         GameDraw.context.AddVGUI(rotatePad);*/
 
         setPos(new Vec2D(GameDraw.context.ScrW/2, GameDraw.context.ScrH * 0.8));
-        setPointsMesh(new Vec2D[] {
-                new Vec2D(cp(30), cp(51)),
-                new Vec2D(cp(-30), cp(51)),
-                new Vec2D(cp(-30), cp(-55)),
-                new Vec2D(cp(30), cp(-55)),
-        });
-
         bulletGenerators[0] = new BulletGenerator(this);
         bulletGenerators[0].currentSpin = 180;
-        bulletGenerators[0].bulletSpeed = 20;
+        bulletGenerators[0].bulletSpeed = 30;
         bulletGenerators[0].bulletAcceleration = 0;
-        bulletGenerators[0].bulletRate = 12;
+        bulletGenerators[0].bulletRate = 8;
         bulletGenerators[0].inaccuracy = 0.04;
         bulletGenerators[0].bulletDamage = 1;
-        bulletGenerators[0].bulletOffset.x = cp(24);
-        bulletGenerators[0].bulletOffset.y = cp(-80);
+        bulletGenerators[0].bulletOffset.x = cp(35);
+        bulletGenerators[0].bulletOffset.y = cp(-30);
 
         boolean additionalBullets = false;
         switch (Game.AttackLevel) {
@@ -109,12 +106,11 @@ public class Ship extends Entity {
                 bulletGenerators[0].inaccuracy -= 0.01;
             }
             case 2: {
-                bulletGenerators[0].bulletRate -= 3;
+                bulletGenerators[0].bulletRate -= 2;
                 bulletGenerators[0].inaccuracy -= 0.01;
             }
             case 1: {
                 bulletGenerators[0].bulletAcceleration += 0.01;
-                bulletGenerators[0].bulletRate -= 1;
                 bulletGenerators[0].inaccuracy -= 0.01;
             }
         }
@@ -129,8 +125,8 @@ public class Ship extends Entity {
             bulletGenerators[3].bulletDamage = bulletGenerators[0].bulletDamage;
             bulletGenerators[3].spinAcceleration = -bulletGenerators[0].spinAcceleration;
             bulletGenerators[3].spinMaxSpeed = bulletGenerators[0].spinMaxSpeed;
-            bulletGenerators[3].bulletOffset.x = cp(-24);
-            bulletGenerators[3].bulletOffset.y = cp(-80);
+            bulletGenerators[3].bulletOffset.x = cp(-35);
+            bulletGenerators[3].bulletOffset.y = cp(-30);
             bulletGenerators[3].spinAcceleration = 1;
             bulletGenerators[3].spinMaxSpeed = 3;
 
@@ -142,8 +138,8 @@ public class Ship extends Entity {
             bulletGenerators[4].bulletDamage = bulletGenerators[0].bulletDamage;
             bulletGenerators[4].spinAcceleration = -bulletGenerators[0].spinAcceleration;
             bulletGenerators[4].spinMaxSpeed = bulletGenerators[0].spinMaxSpeed;
-            bulletGenerators[4].bulletOffset.x = cp(24);
-            bulletGenerators[4].bulletOffset.y = cp(-80);
+            bulletGenerators[4].bulletOffset.x = cp(35);
+            bulletGenerators[4].bulletOffset.y = cp(-30);
             bulletGenerators[4].spinAcceleration = -1;
             bulletGenerators[4].spinMaxSpeed = 3;
         }
@@ -157,15 +153,15 @@ public class Ship extends Entity {
         bulletGenerators[1].inaccuracy = bulletGenerators[0].inaccuracy;
         bulletGenerators[1].spinAcceleration = bulletGenerators[0].spinAcceleration;
         bulletGenerators[1].spinMaxSpeed = bulletGenerators[0].spinMaxSpeed;
-        bulletGenerators[1].bulletOffset.x = cp(-24);
-        bulletGenerators[1].bulletOffset.y = cp(-80);
+        bulletGenerators[1].bulletOffset.x = cp(-35);
+        bulletGenerators[1].bulletOffset.y = cp(-30);
 
         bulletGenerators[2] = new CritBulletGenerator(this);
         bulletGenerators[2].currentSpin = 180;
-        bulletGenerators[2].bulletSpeed = 15;
-        bulletGenerators[2].bulletRate = 200;
+        bulletGenerators[2].bulletSpeed = 25;
+        bulletGenerators[2].bulletRate = 160;
         bulletGenerators[2].bulletDamage = 5;
-        bulletGenerators[2].bulletOffset.y = cp(-80);
+        bulletGenerators[2].bulletOffset.y = cp(-40);
 
         switch (Game.CritLevel) {
             case 5: {
@@ -190,8 +186,10 @@ public class Ship extends Entity {
             }
         }
 
-        bitmap = BitmapFactory.decodeResource(GameDraw.context.getResources(), R.drawable.ship);
-        bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(180), (int) cp(180), false);
+        for (int i = 0; i < bitmaps.length; i++) {
+            bitmaps[i] = BitmapFactory.decodeResource(GameDraw.context.getResources(), FlightActivity.context.getResources().getIdentifier("ship" + i, "drawable", FlightActivity.context.getPackageName()));
+            bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i], (int) cp(180), (int) cp(180), false);
+        }
 
         soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         shotSound = soundPool.load(GameDraw.context.getContext(), R.raw.shotdown, 1);
@@ -217,7 +215,7 @@ public class Ship extends Entity {
     @Override
     public void Tick() {
         double posX = getPos().x, posY = getPos().y;
-        shipRect.set((int) (cp(-38) + posX), (int) (cp(-70) + posY), (int) (cp(38) + posX), (int) (cp(65) + posY));
+        shipRect.set((int) (cp(-38) + posX), (int) (cp(-38) + posY), (int) (cp(38) + posX), (int) (cp(45) + posY));
         for (BulletGenerator bg: bulletGenerators) {
             if (bg != null) bg.update();
         }
@@ -267,7 +265,12 @@ public class Ship extends Entity {
 
         Paint p = new Paint();
         p.setAntiAlias(true);
-        canvas.drawBitmap(bitmap, (float) (getPos().x - bitmap.getWidth()/2), (float) (getPos().y - bitmap.getHeight()/2), p);
+        canvas.drawBitmap(bitmaps[curBitmap], (float) (getPos().x - bitmaps[curBitmap].getWidth()/2), (float) (getPos().y - bitmaps[curBitmap].getHeight()/2), p);
+
+        if (System.currentTimeMillis() > cooldown) {
+            curBitmap = (curBitmap + 1) % bitmaps.length;
+            cooldown = System.currentTimeMillis() + 100;
+        }
 
         if (laserBeam != null && !laserBeam.isDead()) {
             if (colorIncremental)
@@ -298,6 +301,7 @@ public class Ship extends Entity {
     @Override
     public void takeDamage(int hp) {
         if (this.isValid()) {
+            hp = (int) (hp * (1 + ((float)Game.Difficulty)/5));
             Game.takeDamage(hp);
 
             if (soundCoolDown < System.currentTimeMillis()) {

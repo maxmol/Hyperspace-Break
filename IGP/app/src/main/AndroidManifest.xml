@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="maxmol.igp">
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -11,7 +15,6 @@
         <activity
             android:name=".MainMenu"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,13 +23,17 @@
         </activity>
         <activity
             android:name=".GameActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".FlightActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".SelectLevel"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".FlightActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SelectLevel"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".SettingsActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false"/>
 
 </manifest>

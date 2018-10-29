@@ -650,28 +650,38 @@ public class Stages {
 
     // @ Default bullet generators for stages
     public static BulletGenerator getBulletGenerator(int i) {
+        BulletGenerator bg = new BulletGenerator();
         switch (i) {
             case 0:
-                BulletGenerator bg = new BulletGenerator(1, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                bg = new BulletGenerator(1, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
                 bg.shootAtPlayer = true;
                 bg.inaccuracy = 0.02;
-                return bg;
+                break;
             case 1:
-                return new BulletGenerator(2, 15.0, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                bg = new BulletGenerator(2, 15.0, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                break;
             case 2:
-                return new BulletGenerator(3, 10.0, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                bg = new BulletGenerator(3, 10.0, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                break;
             case 3:
-                return new BulletGenerator(1, null, null, 0.01, null, 2, null, null, null, 10.0, -10.0, null, null, 40, 120.0);
+                bg = new BulletGenerator(1, null, null, 0.01, null, 2, null, null, null, 10.0, -10.0, null, null, 40, 120.0);
+                break;
             case 4:
-                return new BulletGenerator(2, 180.0, null, 0.01, null, 10, null, null, null, 15.0, null, null, null, null, null);
+                bg = new BulletGenerator(2, 180.0, null, 0.01, null, 10, null, null, null, 15.0, null, null, null, null, null);
+                break;
             case 5:
-                return new BulletGenerator(2, 30.0, null, 0.0, null, 20, null, 2, 180.0, 15.0, null, null, null, null, null);
+                bg = new BulletGenerator(2, 30.0, null, 0.0, null, 20, null, 2, 180.0, 15.0, null, null, null, null, null);
+                break;
             case 6:
-                return new BulletGenerator(16, 360.0, null, 0.0, null, 10, null, null, null, 4.0, null, null, null, 8, 25.0);
+                bg = new BulletGenerator(16, 360.0, null, 0.0, null, 10, null, null, null, 4.0, null, null, null, 8, 25.0);
+                break;
             case 7:
-                return new BulletGenerator(2, 180.0, null, 0.01, null, 10, null, null, null, 0.0, null, 2.0, 20.0, null, null);
+                bg = new BulletGenerator(2, 180.0, null, 0.01, null, 10, null, null, null, 0.0, null, 2.0, 20.0, null, null);
+                break;
         }
 
-        return new BulletGenerator();
+        bg.bulletRate -= MUtil.Clamp(Game.Difficulty, 1);
+
+        return  bg;
     }
 }
