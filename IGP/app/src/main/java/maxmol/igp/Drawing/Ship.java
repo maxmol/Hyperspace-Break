@@ -8,12 +8,12 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
-import android.view.MotionEvent;
 
 import maxmol.igp.FlightActivity;
 import maxmol.igp.R;
 import maxmol.igp.classes.BulletGenerator;
 import maxmol.igp.classes.Game;
+import maxmol.igp.classes.MUtil;
 import maxmol.igp.classes.Stages;
 import maxmol.igp.classes.Vec2D;
 
@@ -46,7 +46,6 @@ public class Ship extends Entity {
         }
     }
 
-    private boolean moveStarted = false;
     private BulletGenerator[] bulletGenerators = new BulletGenerator[5];
     private LaserBeam laserBeam;
     private int colorChange = 0;
@@ -54,15 +53,16 @@ public class Ship extends Entity {
     public Rect shipRect = new Rect();
     private SoundPool soundPool;
     private int shotSound;
-    private int coinSound;
-    private Vec2D direction = new Vec2D(0, -1);
-    public DPad movePad;//, rotatePad;
+    public DPad movePad;
     private double speed = cp(25);
     private float angle = 0;
     private long soundCoolDown = 0;
     private Bitmap[] bitmaps = new Bitmap[6];
-    private int curBitmap = 0;
+    private int curFrame = 0;
     private long cooldown = 0;
+    public int armor = 0;
+    public int maxArmor = 10;
+    private long armorCooldown = 0;
 
     @Override
     protected boolean limitMove() {
@@ -74,12 +74,25 @@ public class Ship extends Entity {
         movePad.setPos(new Vec2D(GameDraw.context.ScrW * 0.15, GameDraw.context.ScrH * 0.8));
         GameDraw.context.AddVGUI(movePad);
 
-        /*rotatePad = new DPad();
-        rotatePad.save = true;
-        rotatePad.setPos(new Vec2D(GameDraw.context.ScrW * 0.75, GameDraw.context.ScrH * 0.8));
-        GameDraw.context.AddVGUI(rotatePad);*/
 
         setPos(new Vec2D(GameDraw.context.ScrW/2, GameDraw.context.ScrH * 0.8));
+
+        initBulletGenerators();
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        options.outWidth = 64;
+        options.outHeight = 64;
+
+        for (int i = 0; i < bitmaps.length; i++) {
+            bitmaps[i] = BitmapFactory.decodeResource(FlightActivity.context.getResources(), FlightActivity.context.getResources().getIdentifier("ship" + i, "drawable", FlightActivity.context.getPackageName()), options);
+        }
+
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        shotSound = soundPool.load(GameDraw.context.getContext(), R.raw.shotdown, 1);
+    }
+
+    public void initBulletGenerators() {
         bulletGenerators[0] = new BulletGenerator(this);
         bulletGenerators[0].currentSpin = 180;
         bulletGenerators[0].bulletSpeed = 30;
@@ -116,7 +129,7 @@ public class Ship extends Entity {
         }
 
 
-         if (additionalBullets) {
+        if (additionalBullets) {
             bulletGenerators[3] = new BulletGenerator(this);
             bulletGenerators[3].currentSpin = bulletGenerators[0].currentSpin;
             bulletGenerators[3].bulletSpeed = bulletGenerators[0].bulletSpeed;
@@ -165,7 +178,7 @@ public class Ship extends Entity {
 
         switch (Game.CritLevel) {
             case 5: {
-                bulletGenerators[2].bulletDamage += 5;
+                bulletGenerators[2].bulletDamage += 1;
                 bulletGenerators[2].bulletSpeed += 5;
             }
             case 4: {
@@ -173,11 +186,11 @@ public class Ship extends Entity {
                 bulletGenerators[2].bulletRate -= 50;
             }
             case 3: {
-                bulletGenerators[2].bulletDamage += 3;
+                bulletGenerators[2].bulletDamage += 1;
                 bulletGenerators[2].bulletRate -= 25;
             }
             case 2: {
-                bulletGenerators[2].bulletDamage += 2;
+                bulletGenerators[2].bulletDamage += 1;
                 bulletGenerators[2].bulletRate -= 25;
             }
             case 1: {
@@ -185,15 +198,6 @@ public class Ship extends Entity {
                 bulletGenerators[2].bulletRate -= 50;
             }
         }
-
-        for (int i = 0; i < bitmaps.length; i++) {
-            bitmaps[i] = BitmapFactory.decodeResource(GameDraw.context.getResources(), FlightActivity.context.getResources().getIdentifier("ship" + i, "drawable", FlightActivity.context.getPackageName()));
-            bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i], (int) cp(180), (int) cp(180), false);
-        }
-
-        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-        shotSound = soundPool.load(GameDraw.context.getContext(), R.raw.shotdown, 1);
-        coinSound = soundPool.load(GameDraw.context.getContext(), R.raw.blip1, 1);
     }
 
     public boolean activateLaser() {
@@ -220,26 +224,8 @@ public class Ship extends Entity {
             if (bg != null) bg.update();
         }
 
-        //Region clip = new Region(0, 0, GameDraw.context.ScrW, GameDraw.context.ScrH);
-
         for (Entity e: GameDraw.context.getEntities()) {
             if (!(e instanceof Pickable)) continue;
-
-            /*if (e.getPos().Distance(this.getPos()) > cp(100)) {
-                continue;
-            }
-
-            Region eReg = new Region();
-            eReg.setPath(e.generatePath(), clip);
-
-            Region thisReg = new Region();
-            thisReg.setPath(generatePath(), clip);
-
-            new Vec2D(cp(38), cp(65)),
-                new Vec2D(cp(-38), cp(65)),
-                new Vec2D(cp(-38), cp(-70)),
-                new Vec2D(cp(38), cp(-70)),*/
-
 
             if (e.getPos().Distance(this.getPos()) < cp(50))
             {
@@ -249,12 +235,16 @@ public class Ship extends Entity {
 
         Move(movePad.getOutput().mul(speed));
 
-        //setAngle(rotatePad.getRotation());
-
         for (BulletGenerator b: bulletGenerators) {
             if (b != null) {
                 b.currentSpin = 180 + getAngle();
             }
+        }
+
+        long curtime = System.currentTimeMillis();
+        if (armor < maxArmor && armorCooldown < curtime) {
+            armorCooldown = curtime + 500;
+            armor++;
         }
     }
 
@@ -264,12 +254,47 @@ public class Ship extends Entity {
         canvas.rotate(angle, (float) getPos().x, (float) getPos().y);
 
         Paint p = new Paint();
-        p.setAntiAlias(true);
-        canvas.drawBitmap(bitmaps[curBitmap], (float) (getPos().x - bitmaps[curBitmap].getWidth()/2), (float) (getPos().y - bitmaps[curBitmap].getHeight()/2), p);
+        p.setAntiAlias(false);
+        p.setFilterBitmap(false);
+        p.setDither(true);
 
-        if (System.currentTimeMillis() > cooldown) {
-            curBitmap = (curBitmap + 1) % bitmaps.length;
+        int posx = (int) getPos().x, posy = (int) getPos().y;
+        int size = (int)cp(86);
+        canvas.drawBitmap(bitmaps[curFrame], null, new Rect(posx - size, posy - size, posx + size, posy + size), p);
+
+        if (System.currentTimeMillis() > cooldown && !GameDraw.context.paused) {
+            curFrame = (curFrame + 1) % bitmaps.length;
             cooldown = System.currentTimeMillis() + 100;
+
+            Particle par = new Particle();
+            par.pos = getPos().plus(new Vec2D(0, cp(75)));
+            par.duration = .25f;
+            par.startsize = cp(8);
+            par.endsize = cp(4);
+            par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
+            par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
+            par.fric = 0.95;
+            GameDraw.context.AddEntity(par);
+
+            par = new Particle();
+            par.pos = getPos().plus(new Vec2D(-50, cp(40)));
+            par.duration = .25f;
+            par.startsize = cp(5);
+            par.endsize = cp(3);
+            par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
+            par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
+            par.fric = 0.95;
+            GameDraw.context.AddEntity(par);
+
+            par = new Particle();
+            par.pos = getPos().plus(new Vec2D(50, cp(40)));
+            par.duration = .25f;
+            par.startsize = cp(5);
+            par.endsize = cp(3);
+            par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
+            par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
+            par.fric = 0.95;
+            GameDraw.context.AddEntity(par);
         }
 
         if (laserBeam != null && !laserBeam.isDead()) {
@@ -290,7 +315,6 @@ public class Ship extends Entity {
         }
 
         canvas.restore();
-        //drawByPoints(canvas, p);
     }
 
     @Override
@@ -301,29 +325,35 @@ public class Ship extends Entity {
     @Override
     public void takeDamage(int hp) {
         if (this.isValid()) {
-            hp = (int) (hp * (1 + ((float)Game.Difficulty)/5));
-            Game.takeDamage(hp);
+            long curtime = System.currentTimeMillis();
+            armorCooldown = curtime + 5000;
 
-            if (soundCoolDown < System.currentTimeMillis()) {
-                soundCoolDown = System.currentTimeMillis() + 100;
+            hp = (int) (hp * (Stages.isArcade() ? 1 : 1 + Game.Difficulty/5f));
+
+            armor = MUtil.Clamp(armor - hp, -Game.getMaxHealth(), maxArmor);
+
+            if (soundCoolDown < curtime) {
+                soundCoolDown = curtime + 100;
                 soundPool.play(shotSound, 0.5f, 0.5f, 0, 0, 0.8f);
             }
 
-            if (Game.getHealth() <= 0) {
-                GameDraw.context.AddEntity(new SparksEffect(new Vec2D(getPos().x, getPos().y), (int) (Math.random() * 5) + 12, 1, 0, 10, 0.8, Color.rgb(196, 0, 0)));
-                GameDraw.context.AddEntity(new ExplosionEffect(new Vec2D(getPos().x, getPos().y), 2, 0));
+            if (armor < 0) {
+                Game.takeDamage(-armor);
+                armor = 0;
 
-                if (Game.getStage() != Stages.COUNT + 1) {
-                    if (Game.getStep() == Game.getStage()) {
-                        for (int i = 0; i < (Stages.getMoney() / 10); i++)
-                            GameDraw.context.AddEntity(new Coin(-1, getPos()));
+                if (Game.getHealth() <= 0) {
+                    GameDraw.context.AddEntity(new SparksEffect(new Vec2D(getPos().x, getPos().y), (int) (Math.random() * 5) + 12, 1, 0, 10, 0.8, Color.rgb(196, 0, 0)));
+                    GameDraw.context.AddEntity(new ExplosionEffect(new Vec2D(getPos().x, getPos().y), 2, 0));
+
+                    if (!Stages.isArcade()) {
+                        if (Game.getStep() == Game.getStage()) {
+                            for (int i = 0; i < (Stages.getMoney() / 10); i++)
+                                GameDraw.context.AddEntity(new Coin(-1, getPos()));
+                        }
+                        Stages.collectMoney(-Stages.getMoney());
                     }
-                    Stages.collectMoney(-Stages.getMoney());
+                    Remove();
                 }
-                else {
-                    Game.addMoney(Stages.getMoney());
-                }
-                Remove();
             }
         }
     }

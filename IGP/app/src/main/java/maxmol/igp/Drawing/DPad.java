@@ -21,14 +21,13 @@ public class DPad extends SuperVGUI {
     @Override
     public void Draw(Canvas canvas) {
         Paint p = new Paint();
-        p.setColor(Color.argb(64, 255, 255, 255));
+        p.setColor(Color.argb(64, 64, 64, 64));
         canvas.drawCircle((float) getPos().x, (float) getPos().y, size, p);
 
         if (lastTouch == null) lastTouch = getPos();
         canvas.drawCircle((float) lastTouch.x, (float) lastTouch.y, size/4, p);
 
         p.setStyle(Paint.Style.STROKE);
-        p.setColor(Color.argb(128, 128, 128, 128));
         canvas.drawCircle((float) getPos().x, (float) getPos().y, size, p);
     }
 

@@ -64,4 +64,12 @@ public class MUtil {
             return num;
         }
     }
+
+    public static float Lerp(float delta, float from, float to) {
+        if (delta > 1) return to;
+        if (delta < 0) return from;
+
+        return from + (to - from) * delta;
+    }
+
 }

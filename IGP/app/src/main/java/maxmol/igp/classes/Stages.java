@@ -16,8 +16,8 @@ import maxmol.igp.Drawing.ExplosionEffect;
 import maxmol.igp.Drawing.GameDraw;
 import maxmol.igp.Drawing.LaserBeam;
 import maxmol.igp.Drawing.PathEnemy;
+import maxmol.igp.Drawing.SparksEffect;
 import maxmol.igp.FlightActivity;
-import maxmol.igp.GameActivity;
 import maxmol.igp.R;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
@@ -33,7 +33,7 @@ public class Stages {
         @Override
         public void Draw(Canvas canvas) {
             Paint p = new Paint();
-            p.setColor(Color.argb(128, 255, 64, 64));
+            p.setColor(Color.argb(128, 64, 111, 230));
             canvas.drawCircle((float) getPos().x, (float) getPos().y, cp(25f), p);
             canvas.drawCircle((float) getPos().x, (float) getPos().y, cp(20f), p);
         }
@@ -95,6 +95,8 @@ public class Stages {
                     // - STAGE I - //
                     FlightActivity.playMusic(R.raw.stage_music_1);
 
+                    GameDraw.context.ava.say("THEY destroy.\nTHEY kill.\nNow they will pay.");
+
                     if (wait(100)) return;
                     GameDraw.context.AddEntity(new Enemy(50, 20, getBulletGenerator(0)));
 
@@ -119,6 +121,8 @@ public class Stages {
 
                     if (wait(200)) return;
 
+                    GameDraw.context.ava.say("I'd better keep away \nfrom that laser.");
+
                     PathEnemy laserEnemy = new PathEnemy(50, 150, null, R.drawable.enemy3, new Vec2D[] {new Vec2D(50, 10)}, true);
                     laserEnemy.coinsCount = 4;
                     laserEnemy.explosion = 2;
@@ -140,6 +144,7 @@ public class Stages {
                         laserEnemy.addPathPos(new Vec2D(25, 10), true);
                     }
 
+                    GameDraw.context.ava.say("Boom!");
                     for (Entity e: GameDraw.context.getEntities()) {
                         if (e instanceof Enemy) {
                             ((Enemy) e).kill();
@@ -154,6 +159,8 @@ public class Stages {
                     // - STAGE II - //
                     FlightActivity.playMusic(R.raw.stage_music_2);
 
+                    GameDraw.context.ava.say("I will show them!");
+
                     PathEnemy pe;
 
                     if (wait(150)) return;
@@ -166,6 +173,9 @@ public class Stages {
                     GameDraw.context.AddEntity(new Enemy(75, 20, getBulletGenerator(5), R.drawable.enemy));
 
                     if (wait(600)) return;
+
+                    GameDraw.context.ava.say("I don't like this\nat all!");
+
                     pe = new PathEnemy(50, 80, getBulletGenerator(6), R.drawable.enemy, new Vec2D[]{new Vec2D(50, 25)}, true);
                     pe.coinsCount = 10;
                     pe.explosion = 2f;
@@ -206,6 +216,7 @@ public class Stages {
 
                     if (wait(100)) return;
 
+                    GameDraw.context.ava.say("This is something\nnew...");
 
                     for (int i = 0; i < 2; i++) {
                         Stage2BossBulletGenerator bulletGenerator = new Stage2BossBulletGenerator();
@@ -233,6 +244,8 @@ public class Stages {
                     PathEnemy pe;
 
                     if (wait(150)) return;
+
+                    GameDraw.context.ava.say("Uh...\nit's them again!");
 
                     PathEnemy[] twins = new PathEnemy[2];
 
@@ -284,6 +297,8 @@ public class Stages {
                     e3.coinsCount = 3;
                     GameDraw.context.AddEntity(e3);
 
+                    GameDraw.context.ava.say("WOAH!");
+
                     while (e1.isAlive() || e2.isAlive() || e3.isAlive()) {
                         if (e2.isAlive()) e2.addPathPos(new Vec2D(15, 25), true);
                         if (e3.isAlive()) e3.addPathPos(new Vec2D(85, 25), true);
@@ -304,6 +319,7 @@ public class Stages {
                         if (e3.isAlive()) e3.addPathPos(new Vec2D(85, 95), true);
                     }
 
+                    GameDraw.context.ava.say("I'm almost there.\nApproaching the CORE.");
                     if (wait(200)) return;
                     break;
                 }
@@ -311,6 +327,7 @@ public class Stages {
                     // STAGE IV
 
                     FlightActivity.playMusic(R.raw.stage_music_1);
+                    GameDraw.context.ava.say("They are waiting\nfor me...");
 
                     Enemy e1 = new Enemy(30, 20, getBulletGenerator(7), R.drawable.enemy2);
                     e1.coinsCount = 4;
@@ -401,6 +418,7 @@ public class Stages {
                 case 5: {
                     // STAGE V - FINAL
                     FlightActivity.playMusic(R.raw.stage_music_2);
+                    GameDraw.context.ava.say("This is the end\nof my journey\nof my revenge...");
 
                     BulletGenerator bossGenerator = new BulletGenerator(4, 50.0, 10.0, -0.02, null, 5, 2, 2, 180.0, -21.0, null, 1.5, 30.0, null, null);
 
@@ -411,6 +429,8 @@ public class Stages {
                     while (boss.getHealth() > boss.getMaxHealth() * 0.66) {
                         if (wait(4)) return;
                     }
+
+                    GameDraw.context.ava.say("Gotcha.");
 
                     GameDraw.context.AddEntity(new ExplosionEffect(boss.getPos(), 2.0, 0));
 
@@ -460,6 +480,7 @@ public class Stages {
                     }
 
                     GameDraw.context.AddEntity(new ExplosionEffect(boss.getPos(), 2.0, 0));
+                    GameDraw.context.ava.say("You can not \ndefeat me!");
 
                     int spawnInterval = 90;
 
@@ -504,12 +525,20 @@ public class Stages {
                         if (wait(4)) return;
                     }
 
-                    if (wait(200)) return;
+                    GameDraw.context.ava.say("I did it!\nI destroyed them!\nIt's over!");
+
+                    if (wait(350)) return;
 
                     break;
                 }
                 case COUNT + 1: {
                     // -= FREEMODE =- //
+
+                    // Save our campaign stats
+                    String[] stats = Game.GetTable();
+
+                    // Reset our stats
+                    Game.reset();
 
                     FlightActivity.playMusic(R.raw.stage_music_1);
 
@@ -521,8 +550,32 @@ public class Stages {
                             R.drawable.enemy4,
                     };
 
+                    GameDraw.context.ava.say("I have to destroy\nthem!");
+
                     int counter = 0;
+                    int upgrade = 1;
+
                     while (true) {
+                        if (Stages.getMoney() > 100 * upgrade) {
+                            if (upgrade <= 5) {
+                                Game.AttackLevel++;
+                                Game.MaxHealthLevel++;
+                                Game.BombLevel++;
+                                Game.CritLevel++;
+                                GameDraw.context.ava.say("Levelled up!\nHealth restored\n+1 Laser Attack");
+                                upgrade = (int) Math.round(upgrade * 1.5);
+                            }
+                            else {
+                                GameDraw.context.ava.say("Health restored\n+1 Laser Attack");
+                                upgrade += 2;
+                            }
+
+                            Game.LaserAttackCount++;
+                            Game.setHealth(Game.getMaxHealth());
+                            GameDraw.context.ship.initBulletGenerators();
+                            GameDraw.context.AddEntity(new SparksEffect(new Vec2D(GameDraw.context.ship.getPos().x, GameDraw.context.ship.getPos().y), 25, 1, 0, 8, 0.8, Color.rgb(149, 75, 255)));
+                        }
+
                         int spawnType = random.nextInt(3);
                         int primaryType = random.nextInt(3);
                         int secondaryType = random.nextInt(3);
@@ -535,7 +588,7 @@ public class Stages {
                             primaryBulletGenerator = random.nextInt(3);
                         }
                         else if (primaryType == 1) {
-                            primaryBulletGenerator = 3 + random.nextInt(5);
+                            primaryBulletGenerator = 3 + random.nextInt(3);
                         }
                         else if (primaryType == 2) {
                             primaryBulletGenerator = -1;
@@ -569,11 +622,16 @@ public class Stages {
                                 break;
                         }
 
-                        if (wait(500 - MUtil.Clamp(counter * 10, 0, 300))) return;
+                        if (wait(500 - MUtil.Clamp(counter * 10, 0, 300))) {
+                            stats[8] = Game.HighScore.toString(); // we dont want to lose the new highscore
+                            Game.SetTable(stats);
+                            return;
+                        }
                         counter++;
                     }
                 }
             }
+
 
             Game.addMoney(Stages.getMoney());
             
@@ -596,16 +654,14 @@ public class Stages {
                             {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    GameActivity.context.recreate();
-                                    FlightActivity.context.finish();
+                                    DrawThread.getout();
                                 }
 
                             })
                             .setOnCancelListener(new DialogInterface.OnCancelListener() {
                                 @Override
                                 public void onCancel(DialogInterface dialogInterface) {
-                                    GameActivity.context.recreate();
-                                    FlightActivity.context.finish();
+                                    DrawThread.getout();
                                 }
                             })
                             .show();
@@ -613,7 +669,7 @@ public class Stages {
             });
         }
 
-        private boolean wait(int intervals) { // this is weird... couldn't do any better tho
+        private boolean wait(int intervals) { // this is weird... couldn't make it any better tho
             GameDraw.context.drawThread.stageSleep(intervals);
 
             while (true) {
@@ -642,10 +698,18 @@ public class Stages {
 
     public static void collectMoney(int m) {
         money += m;
+
+        if (isArcade() && money > Game.HighScore) {
+            Game.HighScore = money;
+        }
     }
 
     public static int getMoney() {
         return money;
+    }
+
+    public static boolean isArcade() {
+        return Game.getStage() == Stages.COUNT + 1;
     }
 
     // @ Default bullet generators for stages

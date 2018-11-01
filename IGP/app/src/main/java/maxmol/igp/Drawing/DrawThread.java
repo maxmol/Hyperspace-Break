@@ -14,6 +14,7 @@ import maxmol.igp.GameActivity;
 import maxmol.igp.R;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.MUtil;
+import maxmol.igp.classes.SaveLoad;
 import maxmol.igp.classes.Stages;
 
 // This is the drawing and thinking machine. It calls and draws all entities in the game.
@@ -23,6 +24,11 @@ public class DrawThread extends Thread {
     public static final int interval = 25;
     public long sysTime;
     private int dieCounter = 50; // Wait a bit before creating a dialog window
+
+    private float lerpHealth = 0;
+    private float lerpArmor = 0;
+    public static Typeface unlearn;
+    public static Typeface sabofilled;
 
     private static float cp(float pixels) { // Converted Pixels
         return GameDraw.cp(pixels);
@@ -38,6 +44,8 @@ public class DrawThread extends Thread {
 
     public DrawThread(SurfaceHolder surfaceHolder) {
         this.surfaceHolder = surfaceHolder;
+        unlearn = ResourcesCompat.getFont(FlightActivity.context, R.font.unlearn2);
+        sabofilled = ResourcesCompat.getFont(FlightActivity.context, R.font.sabofilled);
     }
 
     public void stageSleep(int intervals) {
@@ -64,25 +72,7 @@ public class DrawThread extends Thread {
             // --- TickStuff ---
 
             if (!GameDraw.context.paused) StageTick();
-
             sysTime = System.currentTimeMillis();
-
-
-            // - Add enemies
-            /*
-            counterToEnemyNextSpawn++;
-
-            if (Stages.COUNT < Game.getStage() - 1) {
-                if (counterToEnemyNextSpawn >= 250) {
-                    Enemy e = new Enemy();
-                    e.setPos(new Vec2D(Math.random() * GameDraw.context.ScrW, cp(-20)));
-                    e.setBulletGenerator(Stages.getBulletGenerator((int) (Math.random() * 7)));
-
-                    GameDraw.context.AddEntity(e);
-
-                    counterToEnemyNextSpawn = 0;
-                }
-            }*/
 
             // --- Core Stuff ---
 
@@ -110,27 +100,45 @@ public class DrawThread extends Thread {
                 ent.Draw(canvas);
             }
 
+            p.setColor(Color.WHITE);
+            p.setTypeface(unlearn);
+            p.setTextSize(cp(60));
+            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(25), cp(80), p);
+            if (Stages.isArcade())
+                canvas.drawText("HIGH: " + Game.formatMoney(Game.HighScore), cp(25), cp(160), p);
+
+            p.setColor(Color.rgb(16, 18, 20));
+            canvas.drawRect(0, GameDraw.context.ScrH, GameDraw.context.ScrW, GameDraw.context.ScrH + cp(200), p);
+
             for (SuperVGUI v : GameDraw.context.getVGUIObjects()) {
                 v.Draw(canvas);
             }
 
-            p.setColor(Color.WHITE);
-            p.setTypeface(ResourcesCompat.getFont(FlightActivity.context, R.font.unlearn2));
-            p.setTextSize(cp(80));
-            canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(25), cp(80), p);
-
-            /*
             p.setColor(Color.GREEN);
             try {
+                lerpHealth = MUtil.Lerp(0.15f, lerpHealth, Game.getHealth());
                 canvas.drawRect(
-                        0f,
-                        (float) GameDraw.context.ScrH - (cp(16)),
-                        (GameDraw.context.ScrW * ((float) Game.getHealth() / (float) Game.getMaxHealth())),
-                        (float) GameDraw.context.ScrH, p);
+                        cp(200),
+                        GameDraw.context.ScrH + cp(154),
+                        cp(200) + MUtil.Clamp(cp(300) * (lerpHealth/Game.getMaxHealth()), 0),
+                        GameDraw.context.ScrH + cp(170), p);
             }
-            catch (ArithmeticException e) {
+            catch (Exception e) {
 
-            }*/
+            }
+
+            p.setColor(Color.BLUE);
+            try {
+                lerpArmor = MUtil.Lerp(0.15f, lerpArmor, GameDraw.context.ship.armor);
+                canvas.drawRect(
+                        cp(200),
+                        GameDraw.context.ScrH + cp(124),
+                        cp(200) + MUtil.Clamp(cp(300) * (lerpArmor / GameDraw.context.ship.maxArmor), 0),
+                        GameDraw.context.ScrH + cp(140), p);
+            }
+            catch (Exception e) {
+
+            }
 
             // --- Pause ---
 
@@ -138,7 +146,7 @@ public class DrawThread extends Thread {
                 p.setColor(Color.WHITE);
                 p.setTextSize(cp(64));
                 p.setTextAlign(Paint.Align.CENTER);
-                p.setTypeface(ResourcesCompat.getFont(FlightActivity.context, R.font.unlearn2));
+                p.setTypeface(unlearn);
                 canvas.drawText("Paused", GameDraw.context.ScrW / 2, cp(120), p);
             }
 
@@ -169,22 +177,20 @@ public class DrawThread extends Thread {
                         public void run() {
                             new AlertDialog.Builder(FlightActivity.context)
                                     .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .setTitle(Game.getStage() == Stages.COUNT + 1 ? "Collected: " + Game.formatMoney(Stages.getMoney()) : "You lose!")
+                                    .setTitle(Stages.isArcade() ? "Collected: " + Game.formatMoney(Stages.getMoney()) : "You lose!")
                                     .setMessage("Your ship is destroyed.")
                                     .setPositiveButton("Close", new DialogInterface.OnClickListener()
                                     {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            GameActivity.context.recreate(); // Weird bug fix
-                                            FlightActivity.context.finish();
+                                            DrawThread.getout();
                                         }
 
                                     })
                                     .setOnCancelListener(new DialogInterface.OnCancelListener() {
                                         @Override
                                         public void onCancel(DialogInterface dialogInterface) {
-                                            GameActivity.context.recreate();
-                                            FlightActivity.context.finish();
+                                            DrawThread.getout();
                                         }
                                     })
                                     .show();
@@ -195,6 +201,13 @@ public class DrawThread extends Thread {
                 }
             }
         }
+    }
+
+    public static void getout() {
+        if (!Stages.isArcade()) {
+            GameActivity.context.recreate();
+        }
+        FlightActivity.context.finish();
     }
 
     public void kill() {

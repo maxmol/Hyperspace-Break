@@ -17,6 +17,7 @@ import android.widget.TextView;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.IFile;
 import maxmol.igp.classes.SaveLoad;
+import maxmol.igp.classes.Stages;
 
 /*
 @ The first activity created after we launch the application.
@@ -80,21 +81,21 @@ public class MainMenu extends Activity {
             e.printStackTrace();
         }
 
-        Button button_newgame = (Button) findViewById(R.id.mainmenu_newgame);
-        Button button_continue = (Button) findViewById(R.id.mainmenu_continue);
+        Button button_arcade = (Button) findViewById(R.id.mainmenu_arcade);
+        Button button_campaign = (Button) findViewById(R.id.mainmenu_campaign);
         Button button_settings = (Button) findViewById(R.id.mainmenu_settings);
 
-        button_newgame.setOnClickListener(new View.OnClickListener() {
+        button_arcade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Game.setStage(Game.getStep());
+                Game.setStage(Stages.COUNT + 1);
                 pressedButton = true;
-                Intent intent = new Intent(context, GameActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(context, FlightActivity.class);
+                startActivityForResult(intent, 0);
             }
         });
 
-        button_continue.setOnClickListener(new View.OnClickListener() {
+        button_campaign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 pressedButton = true;
@@ -128,6 +129,12 @@ public class MainMenu extends Activity {
 
         if (!menu_theme.isPlaying()) {
             menu_theme.start();
+        }
+
+        try {
+            SaveLoad.Save();
+        } catch (SaveLoad.SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
+            saveLoad_noFileSpecified.printStackTrace();
         }
     }
 

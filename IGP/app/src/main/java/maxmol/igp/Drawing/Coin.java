@@ -21,7 +21,7 @@ public class Coin extends Pickable {
 
     public void initVars() {
         pickableText = "¤";
-        pickableColor = Color.rgb(32, 255, 32);
+        pickableColor = Color.rgb(227, 48, 200);;
     }
 
     public Coin(int count, Vec2D vec2D) {

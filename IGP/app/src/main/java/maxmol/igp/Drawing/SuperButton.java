@@ -8,9 +8,7 @@ import android.view.MotionEvent;
 
 import maxmol.igp.classes.Vec2D;
 
-import static maxmol.igp.Drawing.GameDraw.cp;
-
-// This is the first and only object that is a child for my SuperVGUI class.
+// A button that can be pressed.
 public class SuperButton extends SuperVGUI {
     public interface SuperPressEvent {
         void onPress(SuperButton self, MotionEvent event);
@@ -84,7 +82,7 @@ public class SuperButton extends SuperVGUI {
         float x = (float) getPos().x, y = (float) getPos().y;
 
         p.setColor(drawColor);
-        canvas.drawRect(x - width, y - height, x + width, y + height, p);
+        canvas.drawRect(x, y, x + width, y + height, p);
 
         p.setColor(Color.WHITE);
         p.setTextSize(textSize);
@@ -93,12 +91,12 @@ public class SuperButton extends SuperVGUI {
         Rect textBounds = new Rect();
         p.getTextBounds(text, 0, text.length(), textBounds);
 
-        canvas.drawText(text, (float) getPos().x - textBounds.exactCenterX(), (float) getPos().y - textBounds.exactCenterY(), p);
+        canvas.drawText(text, (float) getPos().x + width/2 - textBounds.exactCenterX(), (float) getPos().y + height/2 - textBounds.exactCenterY(), p);
     }
 
     @Override
     public boolean CheckTouch(MotionEvent event, int pointerId) {
-        return event.getX(pointerId) >= getPos().x - width && event.getX(pointerId) <= getPos().x + width && event.getY(pointerId) >= getPos().y - height && event.getY(pointerId) <= getPos().y + height;
+        return event.getX(pointerId) >= getPos().x && event.getX(pointerId) <= getPos().x + width && event.getY(pointerId) >= getPos().y && event.getY(pointerId) <= getPos().y + height;
     }
 
     @Override

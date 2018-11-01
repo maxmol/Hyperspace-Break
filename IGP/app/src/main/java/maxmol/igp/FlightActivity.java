@@ -2,13 +2,20 @@ package maxmol.igp;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 
+import maxmol.igp.Drawing.DrawThread;
 import maxmol.igp.Drawing.GameDraw;
+import maxmol.igp.classes.Game;
+import maxmol.igp.classes.Stages;
 
 /*
 @ Activity class on which the game canvas is created
@@ -63,12 +70,12 @@ public class FlightActivity extends Activity {
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Are you sure you want to quit?")
-                .setMessage("No progress will be saved.")
+                .setMessage(Stages.isArcade() ? "You have collected " + Game.formatMoney(Stages.getMoney()) : "No progress will be saved.")
                 .setPositiveButton("Quit", new DialogInterface.OnClickListener()
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        finish();
+                        DrawThread.getout();
                     }
 
                 })

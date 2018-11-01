@@ -13,6 +13,7 @@ public class Game {
     public static Integer AttackLevel;
     public static Integer CritLevel;
     public static Integer Difficulty;
+    public static Integer HighScore = 0;
 
     public static CharSequence[] Difficulties = new CharSequence[]{"Easy", "Normal", "Hard"};
 
@@ -27,20 +28,18 @@ public class Game {
 
     public static void reset() {
         Step = 1;
-        Money = 100;
-        Health = 100;
+        Money = 30;
         MaxHealthLevel = 0;
         BombLevel = 0;
         AttackLevel = 0;
         CritLevel = 0;
-
         LaserAttackCount = 0;
-
         Difficulty = 0;
+        Health = Game.getMaxHealth();
     }
 
-    public static Object[] GetTable() {
-        return new Object[] {Step, Money, MaxHealthLevel, BombLevel, AttackLevel, CritLevel, LaserAttackCount, Difficulty};
+    public static String[] GetTable() {
+        return new String[] {Step.toString(), Money.toString(), MaxHealthLevel.toString(), BombLevel.toString(), AttackLevel.toString(), CritLevel.toString(), LaserAttackCount.toString(), Difficulty.toString(), HighScore.toString()};
     }
 
 
@@ -56,6 +55,7 @@ public class Game {
         CritLevel = Integer.parseInt(tbl[5]);
         LaserAttackCount = Integer.parseInt(tbl[6]);
         Difficulty = Integer.parseInt(tbl[7]);
+        HighScore = Integer.parseInt(tbl[8]);
 
         setStep(Integer.parseInt(tbl[0]));
         setMoney(Integer.parseInt(tbl[1]));
@@ -67,7 +67,7 @@ public class Game {
         curLevel: Level for which the price is calculated
      */
     public static int getUpgradeCost(Integer curLevel) {
-        int res = (int) (75 * (Math.pow(1.25, (curLevel + 1))));
+        int res = (int) (25 * (Math.pow(1.5, (curLevel + 1))));
         res = res - res % 10;
         return res;
     }

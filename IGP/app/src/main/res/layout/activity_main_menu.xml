@@ -51,27 +51,29 @@
         android:layout_above="@id/mainmenu_bottomlayout"
         android:id="@+id/mainmenu_abovelayout">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Play"
-            android:textSize="18sp"
-            android:fontFamily="@font/sabofilled"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:id="@+id/mainmenu_newgame"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Select Level"
-            android:textSize="18sp"
-            android:fontFamily="@font/sabofilled"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:id="@+id/mainmenu_continue"/>
          <Button
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:text="Settings"
+             android:text="Campaign"
+             android:textSize="18sp"
+             android:fontFamily="@font/sabofilled"
+             style="@style/Widget.AppCompat.Button.Colored"
+             android:id="@+id/mainmenu_campaign"/>
+
+         <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Arcade"
+            android:textSize="18sp"
+            android:fontFamily="@font/sabofilled"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/mainmenu_arcade"/>
+
+         <Button
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:text="Options"
              android:textSize="18sp"
              android:fontFamily="@font/sabofilled"
              style="@style/Widget.AppCompat.Button.Colored"

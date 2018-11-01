@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
@@ -31,6 +32,7 @@ public class Enemy extends Entity {
     private SoundPool soundPool;
     private int shotSound;
     private long soundCoolDown = 0;
+    private int imageSize = 128;
 
     private void preSpawn() {
         speed = cp(2.5);
@@ -39,12 +41,16 @@ public class Enemy extends Entity {
     }
 
     public void initBitmap(Integer res) {
-        bitmap = BitmapFactory.decodeResource(GameDraw.context.getResources(), res == null ? R.drawable.enemy2 : res);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+
+        bitmap = BitmapFactory.decodeResource(GameDraw.context.getResources(), res == null ? R.drawable.enemy2 : res, options);
 
         if (res != null) {
             switch (res) {
                 case R.drawable.enemy: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(228), (int) cp(228), false);
+                    imageSize = (int) cp(114);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(228), (int) cp(228), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(73), cp(-46)),
                             new Vec2D(cp(-73), cp(-46)),
@@ -59,18 +65,20 @@ public class Enemy extends Entity {
                     break;
                 }
                 case R.drawable.enemy2: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(96), (int) cp(96), false);
+                    imageSize = (int) cp(48);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(96), (int) cp(96), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(50), cp(-50)),
                             new Vec2D(cp(-50), cp(-50)),
                             new Vec2D(cp(-50), cp(50)),
                             new Vec2D(cp(50), cp(50)),
                     });
-                    collisionRadius = (int) cp(36);
+                    collisionRadius = (int) cp(60);
                     break;
                 }
                 case R.drawable.enemy3: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(256), (int) cp(256), false);
+                    imageSize = (int) cp(128);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(256), (int) cp(256), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(86), cp(-58)),
                             new Vec2D(cp(-86), cp(-58)),
@@ -86,18 +94,20 @@ public class Enemy extends Entity {
                     break;
                 }
                 case R.drawable.enemy4: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
+                    imageSize = (int) cp(100);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(-85), cp(-70)),
                             new Vec2D(cp(85), cp(-70)),
                             new Vec2D(cp(85), cp(25)),
                             new Vec2D(cp(-85), cp(25)),
                     });
-                    collisionRadius = (int) cp(58);
+                    collisionRadius = (int) cp(90);
                     break;
                 }
                 case R.drawable.enemy5: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
+                    imageSize = (int) cp(100);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(-85), cp(-65)),
                             new Vec2D(cp(85), cp(-65)),
@@ -108,7 +118,8 @@ public class Enemy extends Entity {
                     break;
                 }
                 case R.drawable.enemy6: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
+                    imageSize = (int) cp(100);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(200), (int) cp(200), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(-65), cp(-65)),
                             new Vec2D(cp(65), cp(-65)),
@@ -119,7 +130,8 @@ public class Enemy extends Entity {
                     break;
                 }
                 case R.drawable.enemyboss: {
-                    bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(400), (int) cp(400), false);
+                    imageSize = (int) cp(200);
+                    //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(400), (int) cp(400), false);
                     setPointsMesh(new Vec2D[]{
                             new Vec2D(cp(-200), cp(-190)),
                             new Vec2D(cp(200), cp(-190)),
@@ -135,7 +147,8 @@ public class Enemy extends Entity {
             }
         }
         else {
-            bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(96), (int) cp(96), false);
+            imageSize = (int) cp(48);
+            //bitmap = Bitmap.createScaledBitmap(bitmap, (int) cp(96), (int) cp(96), false);
             setPointsMesh(new Vec2D[]{
                     new Vec2D(cp(50), cp(-50)),
                     new Vec2D(cp(-50), cp(-50)),
@@ -223,14 +236,19 @@ public class Enemy extends Entity {
 
     @Override
     public void Draw(Canvas canvas) {
-        float posX = (float) getPos().x, posY = (float) (getPos().y);
+        int posX = (int) getPos().x, posY = (int) (getPos().y);
 
         canvas.save();
         canvas.rotate(angle - 90, posX, posY);
 
         Paint p = new Paint();
-        p.setAntiAlias(true);
-        canvas.drawBitmap(bitmap, posX - bitmap.getWidth()/2, posY - bitmap.getHeight()/2, p);
+        p.setAntiAlias(false);
+        p.setFilterBitmap(false);
+        p.setDither(true);
+
+        canvas.drawBitmap(bitmap, null, new Rect(posX - imageSize, posY - imageSize, posX + imageSize, posY + imageSize), p);
+
+        //canvas.drawBitmap(bitmap, posX - bitmap.getWidth()/2, posY - bitmap.getHeight()/2, p);
 
         if (healthBarCountDown > 0) {
             float width = cp(80), height = cp(6);
@@ -285,10 +303,10 @@ public class Enemy extends Entity {
             }
         }
 
-        if (Game.getStep() == Game.getStage()) {
+        //if (Game.getStep() == Game.getStage()) {
             for (int i = 0; i < coinsCount; i++)
-                GameDraw.context.AddEntity(new Coin(10, getPos()));
-        }
+                GameDraw.context.AddEntity(new Coin(Game.getStage() * 2, getPos()));
+        //}
         Remove();
     }
 

@@ -28,7 +28,7 @@ public class BackgroundStar extends Entity {
     }
 
     public BackgroundStar() {
-        setPos(new Vec2D(Math.random() * GameDraw.context.ScrH, -5));
+        setPos(new Vec2D(Math.random() * GameDraw.context.ScrW, -5));
         distance = (float) MUtil.Clamp(Math.random(), 0.6, 1);
         circleRadius = cp(20) * (1 - distance);
 
@@ -36,7 +36,7 @@ public class BackgroundStar extends Entity {
     }
 
     public BackgroundStar(StarsBackground fromView) {
-        setPos(new Vec2D(Math.random() * (fromView != null ? fromView.getHeight() : GameDraw.context.ScrH), -5));
+        setPos(new Vec2D(Math.random() * (fromView != null ? fromView.getHeight() : GameDraw.context.ScrW), -5));
         distance = (float) MUtil.Clamp(Math.random(), 0.6, 1);
         circleRadius = cp(20) * (1 - distance);
 

@@ -27,6 +27,7 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
 
     public DrawThread drawThread;
     public Ship ship;
+    public Avatar ava;
     public boolean shouldSort = false;
 
     public int realW, realH;
@@ -105,41 +106,47 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
 
         event.setLocation(event.getX() * ((float)ScrW/realW), event.getY() * ((float)ScrH/realH));
 
-        switch (action) {
-            case MotionEvent.ACTION_MOVE:
-                for (SuperVGUI v : getVGUIObjects()) {
-                    if (v.pointerId != pointerId) continue;
+        try {
+            switch (action) {
+                case MotionEvent.ACTION_MOVE:
+                    for (SuperVGUI v : getVGUIObjects()) {
+                        if (v.pointerId != pointerId) continue;
 
-                    if (!v.CheckTouch(event, pointerId) && v.isPressed()) {
-                        v.OnRelease(event);
+                        if (!v.CheckTouch(event, pointerId) && v.isPressed()) {
+                            v.OnRelease(event);
+                        }
+
+                        if (v.isPressed()) {
+                            v.OnTouch(event);
+                        }
                     }
 
-                    if (v.isPressed()) {
-                        v.OnTouch(event);
+                    break;
+                case MotionEvent.ACTION_DOWN:
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    for (SuperVGUI v : getVGUIObjects()) {
+                        if (v.CheckTouch(event, pointerId)) {
+                            v.pointerId = pointerId;
+                            v.OnDown(event);
+                            break;
+                        }
                     }
-                }
 
-                break;
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_POINTER_DOWN:
-                for (SuperVGUI v : getVGUIObjects()) {
-                    if (v.CheckTouch(event, pointerId)) {
-                        v.pointerId = pointerId;
-                        v.OnDown(event);
-                        break;
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    for (SuperVGUI v : getVGUIObjects()) {
+                        if (v.isPressed() && v.pointerId == pointerId) {
+                            v.OnRelease(event);
+                        }
                     }
-                }
-
-                break;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
-            case MotionEvent.ACTION_CANCEL:
-                for (SuperVGUI v : getVGUIObjects()) {
-                    if (v.isPressed() && v.pointerId == pointerId) {
-                        v.OnRelease(event);
-                    }
-                }
+            }
         }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return true;
     }
 
@@ -173,33 +180,38 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
         drawThread.start();
 
         realW = this.getWidth();
-        realH = this.getHeight();
         ScrW = 720;//this.getWidth();
-        ScrH = (int)(this.getHeight() * ((float)ScrW/this.getWidth()));
+        double coef = ((float)ScrW/this.getWidth());
+        ScrH = (int)(this.getHeight() * coef - cp(200));
 
-        surfaceHolder.setFixedSize(ScrW, ScrH);
+        realH = (int) (this.getHeight() - cp(200) / coef);
 
-        clipRegion = new Region(-GameDraw.context.ScrW, -GameDraw.context.ScrH, GameDraw.context.ScrW, GameDraw.context.ScrH);
+        surfaceHolder.setFixedSize(ScrW, ScrH + (int)cp(200));
+
+        clipRegion = new Region(-ScrW, -ScrH, ScrW, ScrH);
 
         if (ship == null) { // initializing game objects
             final SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
             final int button10 = soundPool.load(GameDraw.context.getContext(), R.raw.button10, 1);
             final int blip1 = soundPool.load(GameDraw.context.getContext(), R.raw.blip1, 1);
 
-            AddVGUI(new SuperButton(new Vec2D(ScrW * 0.9, ScrH * 0.7), cp(60), cp(60), "☢", cp(80), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
+            AddVGUI(new SuperButton(new Vec2D(ScrW - cp(280), ScrH + cp(40)), cp(120), cp(120), "☢", cp(80), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
                 @Override
                 public void onPress(SuperButton self, MotionEvent event) {
                     if (!GameDraw.context.ship.activateLaser()) soundPool.play(button10, 1, 1, 0, 0, 1);
                 }
             }));
 
-            AddVGUI(new SuperButton(new Vec2D(ScrW * 0.9, ScrH * 0.6), cp(60), cp(60), "❚❚", cp(50), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
+            AddVGUI(new SuperButton(new Vec2D(ScrW - cp(140), ScrH + cp(40)), cp(120), cp(120), "❚❚", cp(50), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
                 @Override
                 public void onPress(SuperButton self, MotionEvent event) {
                     paused = !paused;
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
             }));
+
+            ava = new Avatar(new Vec2D((int)(cp(20)), (int)(GameDraw.context.ScrH + cp(20))), (int)cp(140));
+            AddVGUI(ava);
 
             float h = 0f;
 

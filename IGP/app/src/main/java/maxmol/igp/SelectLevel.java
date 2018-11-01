@@ -46,7 +46,7 @@ public class SelectLevel extends AppCompatActivity {
         final int button10 = soundPool.load(getApplicationContext(), R.raw.button10, 1);
         final int blip1 = soundPool.load(getApplicationContext(), R.raw.blip1, 1);
 
-        for (int i = 1; i <= Stages.COUNT + 1; i++) {
+        for (int i = 1; i <= Stages.COUNT; i++) {
             final Integer finalI = i;
             int style = android.R.style.Widget_Material_Button_Colored;
             Button continue_button;
@@ -61,12 +61,12 @@ public class SelectLevel extends AppCompatActivity {
                 continue_button = new Button(this);
 
 
-            continue_button.setText(finalI == Stages.COUNT + 1 ? "FreeMode" : finalI.toString());
+            continue_button.setText(finalI.toString());
             continue_button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 40);
             continue_button.setTypeface(ResourcesCompat.getFont(this, R.font.unlearn2));
 
             GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-            layoutParams.width = finalI == Stages.COUNT + 1 ? btnSize * 4 : btnSize;
+            layoutParams.width = btnSize;
             layoutParams.height = btnSize;
             layoutParams.setMargins(margin, margin, margin, margin);
             continue_button.setLayoutParams(layoutParams);
@@ -99,15 +99,8 @@ public class SelectLevel extends AppCompatActivity {
                 }
             });
 
-            if (finalI != Stages.COUNT + 1 ) {
-                selectLevels.addView(continue_button);
-                selectLevels.bringToFront();
-            }
-            else {
-                LinearLayout ly = ((LinearLayout) findViewById(R.id.select_levels_layout));
-                ly.addView(continue_button);
-                ly.bringToFront();
-            }
+            selectLevels.addView(continue_button);
+            selectLevels.bringToFront();
         }
     }
 

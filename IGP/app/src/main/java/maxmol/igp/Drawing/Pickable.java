@@ -56,16 +56,16 @@ public class Pickable extends Entity {
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setStyle(Paint.Style.FILL);
-        p.setColor(Color.rgb(255, 255, 0));
+        p.setColor(pickableColor);
         canvas.drawCircle(posx, posy, radius, p);
 
         p.setStyle(Paint.Style.STROKE);
-        p.setColor(pickableColor);
+        p.setColor(Color.argb(128, 255, 255, 255));
         p.setStrokeWidth(radius * 0.15f);
         canvas.drawCircle(posx, posy, radius, p);
 
         p.setTextSize(radius * 2f);
-        p.setColor(Color.BLACK);
+        p.setColor(Color.WHITE);
         p.setTextAlign(Paint.Align.CENTER);
         canvas.drawText(pickableText, posx, posy + radius * 0.6f, p);
     }

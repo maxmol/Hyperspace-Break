@@ -32,9 +32,9 @@ public class SaveLoad {
             e.printStackTrace();
         }
 
-        for (Object o : Game.GetTable()) {
+        for (String o : Game.GetTable()) {
             try {
-                SaveFile.Append(o.toString() + splitter);
+                SaveFile.Append(o + splitter);
             } catch (Exception e) {
                 e.printStackTrace();
             }

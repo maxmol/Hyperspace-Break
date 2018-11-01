@@ -27,11 +27,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import maxmol.igp.Drawing.GameDraw;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.SaveLoad;
 import maxmol.igp.classes.SaveLoad.SaveLoad_NoFileSpecified;
-import maxmol.igp.classes.Stages;
 
 /*
 @ Buy/Upgrades menu activity. It's called 'GameActivity' only because initially I thought it would be the actual game activity with game canvas and all.
@@ -341,42 +339,22 @@ public class GameActivity extends Activity {
                             .show();
                 }
                 else {*/
-                if (Game.getStage() <= Stages.COUNT) {
-                    new AlertDialog.Builder(context)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("Stage " + Game.getStage())
-                            .setMessage("Are you sure you want to start this stage?")
-                            .setPositiveButton("Start", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    pressedButton = true;
+                new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Stage " + Game.getStage())
+                        .setMessage("Are you sure you want to start this stage?")
+                        .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pressedButton = true;
 
-                                    Intent intent = new Intent(context, FlightActivity.class);
-                                    startActivityForResult(intent, 0);
-                                }
+                                Intent intent = new Intent(context, FlightActivity.class);
+                                startActivityForResult(intent, 0);
+                            }
 
-                            })
-                            .setNegativeButton("Close", null)
-                            .show();
-                }
-                else {
-                    new AlertDialog.Builder(context)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setTitle("FreeMode")
-                            .setMessage("You have completed the game! Now you can play in FreeMode.")
-                            .setPositiveButton("Start", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    pressedButton = true;
-
-                                    Intent intent = new Intent(context, FlightActivity.class);
-                                    startActivityForResult(intent, 0);
-                                }
-
-                            })
-                            .setNegativeButton("Close", null)
-                            .show();
-                }
+                        })
+                        .setNegativeButton("Close", null)
+                        .show();
                 //}
             }
         });

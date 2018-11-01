@@ -23,8 +23,8 @@ public class Bullet extends Entity{
     public double curving = 0;
     protected int damage;
     protected Entity owner;
-    protected static double bulletLen = 16;
-    protected static double bulletWide = 8;
+    protected static double bulletLen = 12;
+    protected static double bulletWide = 4;
 
     protected Paint bulletPaint;
 
@@ -109,8 +109,9 @@ public class Bullet extends Entity{
                 if (this.getOwner() == e) continue;
                 if (e.getPos().Distance(this.getPos()) > e.getCollisionRadius()) continue;
 
-                if (e.getRegion().contains((int) (getPos().x - e.getPos().x), (int) (getPos().y - e.getPos().y))) hit(e);
-
+                if (e.getRegion().contains((int) (getPos().x - e.getPos().x), (int) (getPos().y - e.getPos().y))) {
+                    hit(e);
+                }
             }
         }
     }
@@ -120,24 +121,29 @@ public class Bullet extends Entity{
     //      The object which the bullet just hit: Entity
     public void hit(Entity e) {
         if (e != null) e.takeDamage(getDamage());
-        GameDraw.context.AddEntity(new SparksEffect(getPos(), 3 + (int)(Math.random() * 3), 1, 0, 6, 1, this.getOwner() instanceof Ship ? Color.rgb(64, 128, 255) : Color.RED));
+        GameDraw.context.AddEntity(new SparksEffect(getPos(), 3 + (int)(Math.random() * 3), 1, 0, 6, 1, this.getOwner() instanceof Ship ? Color.rgb(235, 144, 40) : Color.rgb(64, 111, 230)));
         Remove();
     }
 
     @Override
     public void Draw(Canvas canvas) {
         if (this.getOwner() instanceof Ship) {
-            bulletPaint.setColor(Color.rgb(64, 128, 255));
+            bulletPaint.setColor(Color.rgb(227, 48, 200));
         }
         else {
-            bulletPaint.setColor(Color.RED);
+            bulletPaint.setColor(Color.rgb(64, 111, 230));
         }
 
         Vec2D normVel = velocity.GetNormalized();
         Vec2D drawLen = normVel.mul(cp(bulletLen));
         Vec2D drawWide = normVel.GetRotated(90).mul(cp(bulletWide));
 
-        Vec2D top = getPos().plus(drawLen);
+        Vec2D topleft = getPos().plus(drawLen).minus(drawWide);
+        Vec2D topright = getPos().plus(drawLen).plus(drawWide);
+        Vec2D bottomright = getPos().minus(drawLen).plus(drawWide);
+        Vec2D bottomleft = getPos().minus(drawLen).minus(drawWide);
+
+        /*Vec2D top = getPos().plus(drawLen);
         Vec2D bottom = getPos().minus(drawLen);
         Vec2D right = getPos().plus(drawWide);
         Vec2D left = getPos().minus(drawWide);
@@ -147,6 +153,13 @@ public class Bullet extends Entity{
         path.lineTo((float) right.x, (float) right.y);
         path.lineTo((float) bottom.x, (float) bottom.y);
         path.lineTo((float) left.x, (float) left.y);
+        path.close();*/
+
+        Path path = new Path();
+        path.moveTo((float) topleft.x, (float) topleft.y);
+        path.lineTo((float) topright.x, (float) topright.y);
+        path.lineTo((float) bottomright.x, (float) bottomright.y);
+        path.lineTo((float) bottomleft.x, (float) bottomleft.y);
         path.close();
 
         canvas.drawPath(path, bulletPaint);
