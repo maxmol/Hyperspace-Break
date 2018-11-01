@@ -1,17 +1,13 @@
 package maxmol.igp.classes;
 
-import java.util.Map;
-
 import maxmol.igp.Drawing.Bullet;
 import maxmol.igp.Drawing.Entity;
 import maxmol.igp.Drawing.GameDraw;
-import maxmol.igp.Drawing.Ship;
 
-/*
- @ Magic bullet generator class.
- Here we spawn bullets with different patterns. It is also the main gameplay element.
-  */
-
+/**
+ * Magic bullet generator class.
+ * Here we spawn bullets with different patterns. It is also the main gameplay element.
+ */
 public class BulletGenerator {
     public int bulletsPerShoot = 1;
     public double angleSpread = 180;
@@ -41,15 +37,38 @@ public class BulletGenerator {
     protected Entity owner;
     protected int bulletCountDown;
 
+    /**
+     * Default generator
+     */
     public BulletGenerator() {
         bulletCountDown = bulletRate;
     }
 
+    /**
+     * @param e: the parent entity for bullet generator
+     */
     public BulletGenerator(Entity e) {
         setOwner(e);
         bulletCountDown = bulletRate;
     }
 
+    /**
+     * @param bulletsPerShoot: how many bullets do we create each time
+     * @param angleSpread: with how many degrees we divide our bullets
+     * @param bulletSpeed: how fast each bullet travels
+     * @param bulletAcceleration: its acceleration
+     * @param bulletCurve: for how many degrees it turns if it does
+     * @param bulletRate: how fast we spawn bullets
+     * @param bulletDamage: how many health points each bullet takes when it hits something
+     * @param arraysCount: do we have arrays or bullets
+     * @param arraysSpread: how are they divided
+     * @param spinSpeed: do they spin
+     * @param currentSpin: what angle we start at
+     * @param spinAcceleration: how our spinning accelerates
+     * @param spinMaxSpeed: max speed of spinning before it goes other direction
+     * @param roundBullets: how many bullets are created before the generator cools down
+     * @param roundReload: how much time it cools down
+     */
     public BulletGenerator(Integer bulletsPerShoot, Double angleSpread, Double bulletSpeed, Double bulletAcceleration, Double bulletCurve, Integer bulletRate, Integer bulletDamage, Integer arraysCount, Double arraysSpread, Double spinSpeed, Double currentSpin, Double spinAcceleration, Double spinMaxSpeed, Integer roundBullets, Double roundReload) {
         if (bulletsPerShoot != null) this.bulletsPerShoot = bulletsPerShoot;
         if (angleSpread != null) this.angleSpread = angleSpread;
@@ -75,6 +94,9 @@ public class BulletGenerator {
         bulletCountDown = this.bulletRate;
     }
 
+    /**
+     * our generator thinks here
+     */
     public void update() {
         if (roundBullets > 0) {
             if (curRoundBullets <= 0) {
@@ -96,15 +118,25 @@ public class BulletGenerator {
         }
     }
 
+    /**
+     * @param e: new owner
+     */
     public void setOwner(Entity e) {
         owner = e;
     }
 
+    /**
+     * @param bulletPos: position
+     * @param vel: start velocity
+     * @return created bullet
+     */
     public Bullet constructBullet(Vec2D bulletPos, Vec2D vel) {
         return new Bullet(bulletPos, vel, bulletAcceleration, bulletDamage, bulletCurve, owner);
     }
 
-    // Here it spawns a bullet with all of the parameters given to the class
+    /**
+     * Here it spawns a bullet with all of the parameters given to the class
+     */
     public void spawn() {
         currentSpin += spinSpeed;
         spinSpeed += spinAcceleration;
@@ -115,8 +147,8 @@ public class BulletGenerator {
         Vec2D bulletPos;
         if (owner != null) {
             float ownerAng = owner.getAngle();
-            if (ownerAng != 0f) // not sure if this helps but GetRotated is a quite heavy method
-                bulletPos = owner.getPos().plus(bulletOffset.GetRotated(owner.getAngle()));
+            if (ownerAng != 0f) // not sure if this helps but getRotated is a quite heavy method
+                bulletPos = owner.getPos().plus(bulletOffset.getRotated(owner.getAngle()));
             else
                 bulletPos = owner.getPos().plus(bulletOffset);
         }

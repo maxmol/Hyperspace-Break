@@ -1,6 +1,5 @@
 package maxmol.igp.Drawing;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,7 +17,9 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// The enemy ship entity! It was quite hard to code
+/**
+ * The enemy ship entity!
+ */
 public class Enemy extends Entity {
     private int health = 20;
     private int maxHealth = 20;
@@ -162,7 +163,7 @@ public class Enemy extends Entity {
     public Enemy() {
         preSpawn();
 
-        setPos(new Vec2D(Math.random() * GameDraw.context.ScrW, cp(-20)));
+        setPos(new Vec2D(Math.random() * GameDraw.context.scrW, cp(-20)));
         setBulletGenerator(Stages.getBulletGenerator(1));
 
         initBitmap(null);
@@ -193,7 +194,7 @@ public class Enemy extends Entity {
     public Enemy(float widthPercent, int health, BulletGenerator bg) {
         preSpawn();
 
-        setPos(new Vec2D(GameDraw.context.ScrW * widthPercent/100, cp(-40)));
+        setPos(new Vec2D(GameDraw.context.scrW * widthPercent/100, cp(-40)));
         setBulletGenerator(bg);
         setMaxHealth(health);
         setHealth(health);
@@ -204,7 +205,7 @@ public class Enemy extends Entity {
     public Enemy(float widthPercent, int health, BulletGenerator bg, Integer res) {
         preSpawn();
 
-        setPos(new Vec2D(GameDraw.context.ScrW * widthPercent/100, cp(-40)));
+        setPos(new Vec2D(GameDraw.context.scrW * widthPercent/100, cp(-40)));
         setBulletGenerator(bg);
         setMaxHealth(health);
         setHealth(health);
@@ -220,22 +221,22 @@ public class Enemy extends Entity {
     }
 
     protected void enemyMove() {
-        Move(new Vec2D(0, speed));
+        move(new Vec2D(0, speed));
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         enemyMove();
 
-        if (getPos().y > GameDraw.context.ScrH + cp(50)) {
-            Remove();
+        if (getPos().y > GameDraw.context.scrH + cp(50)) {
+            remove();
         }
 
         if (bulletGenerator != null) bulletGenerator.update();
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         int posX = (int) getPos().x, posY = (int) (getPos().y);
 
         canvas.save();
@@ -253,10 +254,10 @@ public class Enemy extends Entity {
         if (healthBarCountDown > 0) {
             float width = cp(80), height = cp(6);
 
-            p.setColor(Color.argb((int) (128 * MUtil.Clamp(healthBarCountDown / 32f, 0f, 1f)), 255, 255, 255));
+            p.setColor(Color.argb((int) (128 * MUtil.clamp(healthBarCountDown / 32f, 0f, 1f)), 255, 255, 255));
             canvas.drawRect(posX - width, posY - height, posX + width, posY + height, p);
 
-            p.setColor(Color.argb((int) (255 * MUtil.Clamp(healthBarCountDown / 32f, 0f, 1f)), 0, 255, 0));
+            p.setColor(Color.argb((int) (255 * MUtil.clamp(healthBarCountDown / 32f, 0f, 1f)), 0, 255, 0));
             canvas.drawRect(posX - width, posY - height, posX - width + ((float) getHealth() / getMaxHealth() * width * 2), posY + height, p);
             healthBarCountDown--;
         }
@@ -279,7 +280,7 @@ public class Enemy extends Entity {
     }
 
     public void setHealth(int health) {
-        this.health = MUtil.Clamp(health, 0, getMaxHealth());
+        this.health = MUtil.clamp(health, 0, getMaxHealth());
     }
 
     public int getHealth() {
@@ -287,7 +288,7 @@ public class Enemy extends Entity {
     }
 
     public void addHealth(int health) {
-        setHealth(getHealth() + MUtil.Clamp(health, 0));
+        setHealth(getHealth() + MUtil.clamp(health, 0));
     }
 
     public void kill() {
@@ -307,11 +308,11 @@ public class Enemy extends Entity {
             for (int i = 0; i < coinsCount; i++)
                 GameDraw.context.AddEntity(new Coin(Game.getStage() * 2, getPos()));
         //}
-        Remove();
+        remove();
     }
 
     public void takeDamage(int damage) {
-        setHealth(getHealth() - MUtil.Clamp(damage, 0));
+        setHealth(getHealth() - MUtil.clamp(damage, 0));
 
         if (getHealth() <= 0) {
             kill();
@@ -335,7 +336,7 @@ public class Enemy extends Entity {
     }
 
     public void setMaxHealth(int health) {
-        this.maxHealth = MUtil.Clamp(health, 0);
+        this.maxHealth = MUtil.clamp(health, 0);
     }
 
     @Override

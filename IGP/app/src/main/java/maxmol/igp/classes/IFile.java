@@ -7,32 +7,49 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-// @ A useful class i made to make working with filesystem simpler
+/**
+ * A simple class i made to make working with filesystem simpler
+ */
 public class IFile {
     private String filename;
     private File file;
 
-    public class IFileExistanceException extends Exception {
-        IFileExistanceException(String filename) {
+    /**
+     * Why not make useless dedicated exceptions for our new class
+     */
+    public class IFileExistenceException extends Exception {
+        IFileExistenceException(String filename) {
             super("File does not exist (" + filename + ")");
         }
     }
 
+    /**
+     * Same story
+     */
     public class IFileNotInitialized extends Exception {
         IFileNotInitialized() {
             super("File has not been initialized");
         }
     }
 
+    /**
+     * ... empty generator ...
+     */
     public IFile() {
 
     }
 
-    public IFile(String filename) throws IFileExistanceException {
-        this.Open(filename);
+    /**
+     * @param filename: path to file
+     */
+    public IFile(String filename) {
+        this.open(filename);
     }
 
-    public void Open(String filename) throws IFileExistanceException {
+    /**
+     * @param filename: path to file
+     */
+    public void open(String filename) {
         this.file = new File(filename);
 
         this.file.getParentFile().mkdirs();
@@ -40,13 +57,19 @@ public class IFile {
         this.filename = filename;
     }
 
-    public String Read() throws FileNotFoundException, IFileNotInitialized, IFileExistanceException {
+    /**
+     * @return file contents
+     * @throws FileNotFoundException: no such file '~'
+     * @throws IFileNotInitialized: we forgot to open the file
+     * @throws IFileExistenceException:  file doesn't exist
+     */
+    public String read() throws FileNotFoundException, IFileNotInitialized, IFileExistenceException {
         if (file == null) {
             throw new IFileNotInitialized();
         }
 
         if (!file.exists()) {
-            throw new IFileExistanceException(filename);
+            throw new IFileExistenceException(filename);
         }
 
         Scanner scanner = new Scanner(this.file);
@@ -58,7 +81,12 @@ public class IFile {
         return content;
     }
 
-    public void Write(String content) throws IOException, IFileNotInitialized {
+    /**
+     * @param content: what to write to file
+     * @throws IOException: default input/output exception
+     * @throws IFileNotInitialized: we forgot to open the file
+     */
+    public void write(String content) throws IOException, IFileNotInitialized {
         if (file == null) {
             throw new IFileNotInitialized();
         }
@@ -68,53 +96,81 @@ public class IFile {
         writer.close();
     }
 
-    public void Append(String content) throws IOException, IFileNotInitialized, IFileExistanceException {
-        String filecontent = this.Read();
+    /**
+     * @param content
+     * @throws IOException
+     * @throws IFileNotInitialized
+     * @throws IFileExistenceException
+     */
+    public void append(String content) throws IOException, IFileNotInitialized, IFileExistenceException {
+        String fileContent = this.read();
 
         PrintWriter writer = new PrintWriter(new FileWriter(this.file));
-        writer.printf(filecontent + content);
+        writer.printf(fileContent + content);
         writer.close();
     }
 
-    public String GetPath() throws IFileNotInitialized, IFileExistanceException {
+    /**
+     * @return our current path
+     * @throws IFileNotInitialized: we forgot to open the file
+     * @throws IFileExistenceException: file doesn't exist
+     */
+    public String getPath() throws IFileNotInitialized, IFileExistenceException {
         if (file == null) {
             throw new IFileNotInitialized();
         }
 
         if (!file.exists()) {
-            throw new IFileExistanceException(filename);
+            throw new IFileExistenceException(filename);
         }
 
         return file.getAbsolutePath();
     }
 
-    public long GetSize() throws IFileNotInitialized, IFileExistanceException {
+    /**
+     * @return current file's size
+     * @throws IFileNotInitialized
+     * @throws IFileExistenceException
+     */
+    public long getSize() throws IFileNotInitialized, IFileExistenceException {
         if (file == null) {
             throw new IFileNotInitialized();
         }
 
         if (!file.exists()) {
-            throw new IFileExistanceException(filename);
+            throw new IFileExistenceException(filename);
         }
 
         return file.length();
     }
 
-    public File GetFile() throws IFileNotInitialized {
+    /**
+     * @return our oppened file
+     * @throws IFileNotInitialized: we forgot to open it before
+     */
+    public File getFile() throws IFileNotInitialized {
         if (file == null) {
             throw new IFileNotInitialized();
         }
         return file;
     }
 
-    public String GetFileName() throws IFileNotInitialized {
+    /**
+     * @return current file's name
+     * @throws IFileNotInitialized: we forgot to open it before
+     */
+    public String getFileName() throws IFileNotInitialized {
         if (file == null) {
             throw new IFileNotInitialized();
         }
         return filename;
     }
 
-    public void Delete() throws IFileNotInitialized {
+    /**
+     * delete the file
+     * @throws IFileNotInitialized: we didn't open it
+     */
+    public void delete() throws IFileNotInitialized {
         if (file == null) {
             throw new IFileNotInitialized();
         }
@@ -122,22 +178,48 @@ public class IFile {
         file.delete();
     }
 
-    public static String ReadFile(String filename) throws IFileExistanceException, FileNotFoundException, IFileNotInitialized {
+    /**
+     * @param filename: the path to file we want to quickly read
+     * @return file contents
+     * @throws IFileExistenceException
+     * @throws FileNotFoundException
+     * @throws IFileNotInitialized
+     */
+    public static String readFile(String filename) throws IFileExistenceException, FileNotFoundException, IFileNotInitialized {
         IFile f = new IFile(filename);
-        return f.Read();
+        return f.read();
     }
 
-    public static void WriteFile(String filename, String content) throws IFileExistanceException, IOException, IFileNotInitialized {
+    /**
+     * quickly write to file
+     * @param filename: path to file we want to write to
+     * @param content: what to write
+     * @throws IOException
+     * @throws IFileNotInitialized
+     */
+    public static void writeFile(String filename, String content) throws IOException, IFileNotInitialized {
         IFile f = new IFile(filename);
-        f.Write(content);
+        f.write(content);
     }
 
-    public static void AppendFile(String filename, String content) throws IFileExistanceException, IOException, IFileNotInitialized {
+    /**
+     * quickly append to file
+     * @param filename: path to file
+     * @param content: what to add to file
+     * @throws IFileExistenceException
+     * @throws IOException
+     * @throws IFileNotInitialized
+     */
+    public static void appendFile(String filename, String content) throws IFileExistenceException, IOException, IFileNotInitialized {
         IFile f = new IFile(filename);
-        f.Append(content);
+        f.append(content);
     }
 
-    public static File[] Find(String dirName){
+    /**
+     * @param dirName: path to directory to list files from
+     * @return all files found in the directory
+     */
+    public static File[] find(String dirName){
         File dir = new File(dirName);
         return dir.listFiles();
     }

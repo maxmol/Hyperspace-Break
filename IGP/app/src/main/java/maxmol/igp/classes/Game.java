@@ -1,70 +1,79 @@
 package maxmol.igp.classes;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.widget.TextView;
 
-// @ Static class used for storing game variables
+
+/**
+ * Static class used for storing game variables
+ */
 public class Game {
-    private static Integer Step;
-    private static Integer Money;
-    private static Integer Health;
-    public static Integer MaxHealthLevel;
-    public static Integer BombLevel;
-    public static Integer AttackLevel;
-    public static Integer CritLevel;
-    public static Integer Difficulty;
-    public static Integer HighScore = 0;
+    private static Integer step;
+    private static Integer money;
+    private static Integer health;
+    public static Integer maxHealthLevel;
+    public static Integer bombLevel;
+    public static Integer attackLevel;
+    public static Integer critLevel;
+    public static Integer difficulty;
+    public static Integer highScore = 0;
 
-    public static CharSequence[] Difficulties = new CharSequence[]{"Easy", "Normal", "Hard"};
+    public static CharSequence[] difficulties = new CharSequence[]{"Easy", "Normal", "Hard"};
 
-    public static Integer LaserAttackCost = 50;
-    public static Integer LaserAttackCount;
+    public static Integer laserAttackCost = 50;
+    public static Integer laserAttackCount;
 
-    private static Integer Stage;
+    private static Integer stage;
 
     public static TextView moneyTextView = null;
 
     public static Context context = null;
 
-    public static void reset() {
-        Step = 1;
-        Money = 30;
-        MaxHealthLevel = 0;
-        BombLevel = 0;
-        AttackLevel = 0;
-        CritLevel = 0;
-        LaserAttackCount = 0;
-        Difficulty = 0;
-        Health = Game.getMaxHealth();
-    }
-
-    public static String[] GetTable() {
-        return new String[] {Step.toString(), Money.toString(), MaxHealthLevel.toString(), BombLevel.toString(), AttackLevel.toString(), CritLevel.toString(), LaserAttackCount.toString(), Difficulty.toString(), HighScore.toString()};
-    }
-
-
-    /*
-    @ Parse saved table to static vars
-    @params
-        tbl: Source table
+    /**
+     * Resets all game progress
      */
-    public static void SetTable(String[] tbl) {
-        MaxHealthLevel = Integer.parseInt(tbl[2]);
-        BombLevel = Integer.parseInt(tbl[3]);
-        AttackLevel = Integer.parseInt(tbl[4]);
-        CritLevel = Integer.parseInt(tbl[5]);
-        LaserAttackCount = Integer.parseInt(tbl[6]);
-        Difficulty = Integer.parseInt(tbl[7]);
-        HighScore = Integer.parseInt(tbl[8]);
+    public static void reset() {
+        step = 1;
+        money = 30;
+        maxHealthLevel = 0;
+        bombLevel = 0;
+        attackLevel = 0;
+        critLevel = 0;
+        laserAttackCount = 0;
+        difficulty = 0;
+        health = Game.getMaxHealth();
+    }
+
+    /**
+     * @return a table containing all saved (permanently to a file) variables
+     */
+    @NonNull
+    public static String[] getTable() {
+        return new String[] {step.toString(), money.toString(), maxHealthLevel.toString(), bombLevel.toString(), attackLevel.toString(), critLevel.toString(), laserAttackCount.toString(), difficulty.toString(), highScore.toString()};
+    }
+
+
+    /**
+     * Parse saved table to static vars
+     * @param tbl:Source table
+     */
+    public static void setTable(String[] tbl) {
+        maxHealthLevel = Integer.parseInt(tbl[2]);
+        bombLevel = Integer.parseInt(tbl[3]);
+        attackLevel = Integer.parseInt(tbl[4]);
+        critLevel = Integer.parseInt(tbl[5]);
+        laserAttackCount = Integer.parseInt(tbl[6]);
+        difficulty = Integer.parseInt(tbl[7]);
+        highScore = Integer.parseInt(tbl[8]);
 
         setStep(Integer.parseInt(tbl[0]));
         setMoney(Integer.parseInt(tbl[1]));
     }
 
-    /*
-    @ Calculate the price of an upgrade
-    @params
-        curLevel: Level for which the price is calculated
+    /**
+     * @param curLevel: Level for which the price is calculated
+     * @return calculated price of an upgrade
      */
     public static int getUpgradeCost(Integer curLevel) {
         int res = (int) (25 * (Math.pow(1.5, (curLevel + 1))));
@@ -72,38 +81,35 @@ public class Game {
         return res;
     }
 
-    /*
-    @ Stages methods (getters, setters, etc.)
+    /**
+     * below are simple getters, setters, etc
      */
     public static Integer getStep() {
-        return Step;
+        return step;
     }
+
     public static void setStep(Integer step) {
-        Step = step;
+        Game.step = step;
     }
+
     public static void nextStep() {
         setStep(getStep() + 1);
     }
+
     public static Integer getStage() {
-        return Stage;
+        return stage;
     }
+
     public static void setStage(Integer stage) {
-        Stage = stage;
+        Game.stage = stage;
     }
 
-
-    /*
-    @ Money methods (get - return, set - setter, etc )
-     */
     public static Integer getMoney() {
-        return Money;
+        return money;
     }
 
-    /*
-    @ update UI after money amount changes
-     */
     public static void setMoney(Integer money) {
-        Money = money;
+        Game.money = money;
 
         if (moneyTextView != null) {
             try {
@@ -130,18 +136,18 @@ public class Game {
     }
 
     public static Integer getHealth() {
-        return Health;
+        return health;
     }
 
     public static void setHealth(Integer hp) {
-        Health = MUtil.Clamp(hp, 0, getMaxHealth());
+        health = MUtil.clamp(hp, 0, getMaxHealth());
     }
 
     public static void takeDamage(Integer hp) {
-        setHealth(getHealth() - MUtil.Clamp(hp, 0));
+        setHealth(getHealth() - MUtil.clamp(hp, 0));
     }
 
     public static Integer getMaxHealth() {
-        return 50 + MaxHealthLevel * 20;
+        return 50 + maxHealthLevel * 20;
     }
 }

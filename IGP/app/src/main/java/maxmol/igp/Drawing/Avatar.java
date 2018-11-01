@@ -6,12 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.v4.content.res.ResourcesCompat;
-
-import maxmol.igp.FlightActivity;
 import maxmol.igp.R;
 import maxmol.igp.classes.Vec2D;
 
+/**
+ * Our character icon. It can talk!
+ */
 public class Avatar extends SuperVGUI {
     private Bitmap bitmap;
     private int size;
@@ -31,12 +31,15 @@ public class Avatar extends SuperVGUI {
         bitmap = BitmapFactory.decodeResource(GameDraw.context.getResources(), R.drawable.ava, options);
     }
 
+    /**
+     * @param text: what will it say
+     */
     public void say(String text) {
         saying = text;
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setAntiAlias(false);
         p.setFilterBitmap(false);
@@ -50,7 +53,7 @@ public class Avatar extends SuperVGUI {
             p.setTypeface(DrawThread.sabofilled);
             int y = 0;
             for (String line: text.split("\n")) {
-                canvas.drawText(line, (int) (getPos().x + size + GameDraw.cp(40)), (int) (getPos().y + GameDraw.cp(20)) + y, p);
+                canvas.drawText(line, (int) (getPos().x + size + GameDraw.cp(10)), (int) (getPos().y + GameDraw.cp(30)) + y, p);
                 y += GameDraw.cp(32);
             }
         }

@@ -5,9 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.support.v7.app.AlertDialog;
-
 import java.util.Random;
-
 import maxmol.igp.Drawing.Bullet;
 import maxmol.igp.Drawing.DrawThread;
 import maxmol.igp.Drawing.Enemy;
@@ -22,16 +20,21 @@ import maxmol.igp.R;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// @ Stages logic. Making a stage is rather simple now.
+
+/**
+ * Stages logic. Making a stage is rather simple with this.
+ */
 public class Stages {
     private static int money;
 
     public static final int COUNT = 5;
 
-    // overrided extended bullet class for an enemy
+    /**
+     * overrided extended bullet class for an enemy
+     */
     private static class Stage2BossBullet extends Bullet {
         @Override
-        public void Draw(Canvas canvas) {
+        public void draw(Canvas canvas) {
             Paint p = new Paint();
             p.setColor(Color.argb(128, 64, 111, 230));
             canvas.drawCircle((float) getPos().x, (float) getPos().y, cp(25f), p);
@@ -43,19 +46,21 @@ public class Stages {
         }
 
         @Override
-        public void Tick() {
-            super.Tick();
+        public void tick() {
+            super.tick();
 
-            if (getPos().x > GameDraw.context.ScrW * 0.95 || getPos().x < GameDraw.context.ScrW * 0.05 || getPos().y < GameDraw.context.ScrH * 0.05 || getPos().y > GameDraw.context.ScrH * 0.95) {
+            if (getPos().x > GameDraw.context.scrW * 0.95 || getPos().x < GameDraw.context.scrW * 0.05 || getPos().y < GameDraw.context.scrH * 0.05 || getPos().y > GameDraw.context.scrH * 0.95) {
                 BulletGenerator bulletGenerator = new BulletGenerator(8, 360.0, 10.0, 0.0, null, 0, null, null, null, null, null, null, null, null, null);
                 bulletGenerator.setOwner(this);
                 bulletGenerator.update();
-                Remove();
+                remove();
             }
         }
     }
 
-    // overrided extended bullet generator class for an enemy
+    /**
+     * overrided extended bullet generator class for an enemy
+     */
     private static class Stage2BossBulletGenerator extends BulletGenerator {
         @Override
         public Bullet constructBullet(Vec2D bulletPos, Vec2D vel) {
@@ -70,7 +75,9 @@ public class Stages {
         }
     }
 
-    // empty bullet generator to be changed after creating
+    /**
+     * empty bullet generator to be changed after creating
+     */
     private static class FreeMode3BulletGenerator extends Stage2BossBulletGenerator {
         public FreeMode3BulletGenerator() {
             super(null, null, null, null, null, 50, 5, null, null, null, null, null, null, null, null);
@@ -78,16 +85,23 @@ public class Stages {
         }
     }
 
-    // Enemy spawning thread
+    /**
+     * Enemy spawning thread
+     */
     public static class StageScript extends Thread {
         private int stage;
         public boolean running = true;
 
+        /**
+         * @param stage: which stage are we in
+         */
         public StageScript(int stage) {
             this.stage = stage;
-
         }
 
+        /**
+         * stage script and ending here
+         */
         @Override
         public void run() {
             switch (stage) {
@@ -259,7 +273,7 @@ public class Stages {
                         bulletGenerator.bulletCountDown = i == 0 ? 12 : 0;
 
                         PathEnemy boss = new PathEnemy(0, 80, bulletGenerator, R.drawable.enemy4, new Vec2D[]{new Vec2D(i == 0 ? 10 : 90, 40)}, true);
-                        boss.setPos(new Vec2D(GameDraw.context.ScrW * (i == 0 ? 0.1 : 0.9), GameDraw.context.ScrH + cp(5)));
+                        boss.setPos(new Vec2D(GameDraw.context.scrW * (i == 0 ? 0.1 : 0.9), GameDraw.context.scrH + cp(5)));
                         boss.setAngle(i == 0 ? 0 : -180);
                         boss.setSpeed(5);
                         boss.coinsCount = 8;
@@ -393,24 +407,6 @@ public class Stages {
                         if (wait(4)) return;
                     }
 
-                    /*Enemy l1 = new Enemy(30, 1000, null, R.drawable.enemy3);
-                    GameDraw.context.AddEntity(l1);
-                    l1.setAngle(-90);
-
-                    Enemy r1 = new Enemy(40, 1000, null, R.drawable.enemy3);
-                    GameDraw.context.AddEntity(r1);
-                    r1.setAngle(90);
-
-                    LaserBeam l1b = new LaserBeam(1000, 2, 20);
-                    laserBeam.setOwner(l1);
-                    GameDraw.context.AddEntity(laserBeam);
-                    l1b.angle = -90;
-
-                    LaserBeam r1b = new LaserBeam(1000, 2, 20);
-                    laserBeam.setOwner(r1);
-                    GameDraw.context.AddEntity(laserBeam);
-                    l1b.angle = 90;*/
-
                     if (wait(200)) return;
 
                     break;
@@ -534,8 +530,8 @@ public class Stages {
                 case COUNT + 1: {
                     // -= FREEMODE =- //
 
-                    // Save our campaign stats
-                    String[] stats = Game.GetTable();
+                    // save our campaign stats
+                    String[] stats = Game.getTable();
 
                     // Reset our stats
                     Game.reset();
@@ -558,10 +554,10 @@ public class Stages {
                     while (true) {
                         if (Stages.getMoney() > 100 * upgrade) {
                             if (upgrade <= 5) {
-                                Game.AttackLevel++;
-                                Game.MaxHealthLevel++;
-                                Game.BombLevel++;
-                                Game.CritLevel++;
+                                Game.attackLevel++;
+                                Game.maxHealthLevel++;
+                                Game.bombLevel++;
+                                Game.critLevel++;
                                 GameDraw.context.ava.say("Levelled up!\nHealth restored\n+1 Laser Attack");
                                 upgrade = (int) Math.round(upgrade * 1.5);
                             }
@@ -570,7 +566,7 @@ public class Stages {
                                 upgrade += 2;
                             }
 
-                            Game.LaserAttackCount++;
+                            Game.laserAttackCount++;
                             Game.setHealth(Game.getMaxHealth());
                             GameDraw.context.ship.initBulletGenerators();
                             GameDraw.context.AddEntity(new SparksEffect(new Vec2D(GameDraw.context.ship.getPos().x, GameDraw.context.ship.getPos().y), 25, 1, 0, 8, 0.8, Color.rgb(149, 75, 255)));
@@ -622,9 +618,9 @@ public class Stages {
                                 break;
                         }
 
-                        if (wait(500 - MUtil.Clamp(counter * 10, 0, 300))) {
-                            stats[8] = Game.HighScore.toString(); // we dont want to lose the new highscore
-                            Game.SetTable(stats);
+                        if (wait(500 - MUtil.clamp(counter * 10, 0, 300))) {
+                            stats[8] = Game.highScore.toString(); // we dont want to lose the new highscore
+                            Game.setTable(stats);
                             return;
                         }
                         counter++;
@@ -669,7 +665,11 @@ public class Stages {
             });
         }
 
-        private boolean wait(int intervals) { // this is weird... couldn't make it any better tho
+        /**
+         * @param intervals: how much time to wait in milliseconds
+         * @return
+         */
+        private boolean wait(int intervals) {
             GameDraw.context.drawThread.stageSleep(intervals);
 
             while (true) {
@@ -692,27 +692,43 @@ public class Stages {
         }
     }
 
+    /**
+     * start the stage
+     */
     public static void start() {
         money = 0;
     }
 
+    /**
+     * we picked up some coins!
+     * @param m: amount
+     */
     public static void collectMoney(int m) {
         money += m;
 
-        if (isArcade() && money > Game.HighScore) {
-            Game.HighScore = money;
+        if (isArcade() && money > Game.highScore) {
+            Game.highScore = money;
         }
     }
 
+    /**
+     * @return money amount in this run
+     */
     public static int getMoney() {
         return money;
     }
 
+    /**
+     * @return if we are playing arcade (freemode) or not
+     */
     public static boolean isArcade() {
         return Game.getStage() == Stages.COUNT + 1;
     }
 
-    // @ Default bullet generators for stages
+    /**
+     * @param i
+     * @return Default bullet generators for stages
+     */
     public static BulletGenerator getBulletGenerator(int i) {
         BulletGenerator bg = new BulletGenerator();
         switch (i) {
@@ -744,7 +760,7 @@ public class Stages {
                 break;
         }
 
-        bg.bulletRate -= MUtil.Clamp(Game.Difficulty, 1);
+        bg.bulletRate -= MUtil.clamp(Game.difficulty, 1);
 
         return  bg;
     }

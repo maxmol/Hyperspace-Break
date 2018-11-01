@@ -8,7 +8,9 @@ import android.view.MotionEvent;
 import maxmol.igp.classes.Vec2D;
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// A static joystick on the screen. Was used before, but now extends to DynamicDPad.
+/**
+ * A static joystick on the screen. Was used before, but now extends to DynamicDPad.
+ */
 public class DPad extends SuperVGUI {
     protected Vec2D dir = new Vec2D(0, 0);
     public Vec2D output = new Vec2D(0, 0);
@@ -19,7 +21,7 @@ public class DPad extends SuperVGUI {
     private Vec2D lastTouch;
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(Color.argb(64, 64, 64, 64));
         canvas.drawCircle((float) getPos().x, (float) getPos().y, size, p);
@@ -32,9 +34,9 @@ public class DPad extends SuperVGUI {
     }
 
     @Override
-    public boolean CheckTouch(MotionEvent event, int pointerId) {
+    public boolean checkTouch(MotionEvent event, int pointerId) {
         Vec2D t = new Vec2D(event.getX(pointerId), event.getY(pointerId));
-        if (t.Distance(getPos()) <= size * 4) {
+        if (t.distance(getPos()) <= size * 4) {
             return true;
         }
 
@@ -42,12 +44,12 @@ public class DPad extends SuperVGUI {
     }
 
     @Override
-    public void OnTouch(MotionEvent event) {
+    public void onTouch(MotionEvent event) {
         lastTouch = new Vec2D(event.getX(pointerId), event.getY(pointerId));
-        dir = lastTouch.minus(getPos()).GetNormalized();
+        dir = lastTouch.minus(getPos()).getNormalized();
         rotation = (float) lastTouch.getRotationTo(getPos());
 
-        if (lastTouch.Distance(getPos()) > size*0.75) {
+        if (lastTouch.distance(getPos()) > size*0.75) {
             lastTouch = getPos().plus(dir.mul((double) size*0.75));
         }
 
@@ -55,8 +57,8 @@ public class DPad extends SuperVGUI {
     }
 
     @Override
-    public void OnRelease(MotionEvent event) {
-        super.OnRelease(event);
+    public void onRelease(MotionEvent event) {
+        super.onRelease(event);
 
         if (!save) {
             lastTouch = getPos();

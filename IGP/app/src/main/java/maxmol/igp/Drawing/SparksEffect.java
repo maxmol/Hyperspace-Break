@@ -11,7 +11,9 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// Cool effect created when a bullet hits something.
+/**
+ * Cool effect created when a bullet hits something.
+ */
 public class SparksEffect extends Entity {
 
     private static class Spark {
@@ -43,7 +45,7 @@ public class SparksEffect extends Entity {
     }
 
     public SparksEffect(Vec2D pos, int count, int spawn, int spawnRate, double force, double fade, int color) {
-        this.count = MUtil.Clamp(count, 1, 50);
+        this.count = MUtil.clamp(count, 1, 50);
         this.force = cp(force);
         this.spawn = spawn;
         this.spawnRate = spawnRate;
@@ -54,16 +56,16 @@ public class SparksEffect extends Entity {
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         if (spawn <= 0 && sparks.size() <= 0) {
-            Remove();
+            remove();
         }
 
         for (Spark spark: (ArrayList<Spark>) sparks.clone()) {
             spark.pos = spark.pos.plus(spark.vel);
             spark.vel = spark.vel.mul(0.8 / fade);
 
-            if (spark.vel.Length() < 1) {
+            if (spark.vel.length() < 1) {
                 sparks.remove(spark);
             }
         }
@@ -75,13 +77,13 @@ public class SparksEffect extends Entity {
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(color);
         p.setAntiAlias(true);
 
         for (Spark spark: sparks) {
-            float length = (float) (spark.vel.Length() * 8f);
+            float length = (float) (spark.vel.length() * 8f);
             float x = (float) spark.pos.x, y = (float) spark.pos.y;
 
             canvas.save();

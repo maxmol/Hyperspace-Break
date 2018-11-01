@@ -1,8 +1,17 @@
 package maxmol.igp.classes;
 
-// @ Useful math methods.
+/**
+ * My useful math methods.
+ */
 public class MUtil {
-    public static double Clamp(double num, double min, double max) {
+
+    /**
+     * @param num: the number input
+     * @param min: minimum value that number can be
+     * @param max: maximum value of that number
+     * @return clamped number
+     */
+    public static double clamp(double num, double min, double max) {
         if (num > max) {
             return max;
         }
@@ -14,7 +23,7 @@ public class MUtil {
         }
     }
 
-    public static float Clamp(float num, float min, float max) {
+    public static float clamp(float num, float min, float max) {
         if (num > max) {
             return max;
         }
@@ -26,7 +35,7 @@ public class MUtil {
         }
     }
 
-    public static int Clamp(int num, int min, int max) {
+    public static int clamp(int num, int min, int max) {
         if (num > max) {
             return max;
         }
@@ -38,7 +47,7 @@ public class MUtil {
         }
     }
 
-    public static double Clamp(double num, double min) {
+    public static double clamp(double num, double min) {
         if (num < min) {
             return min;
         }
@@ -47,7 +56,7 @@ public class MUtil {
         }
     }
 
-    public static int Clamp(int num, int min) {
+    public static int clamp(int num, int min) {
         if (num < min) {
             return min;
         }
@@ -56,7 +65,7 @@ public class MUtil {
         }
     }
 
-    public static float Clamp(float num, float min) {
+    public static float clamp(float num, float min) {
         if (num < min) {
             return min;
         }
@@ -65,7 +74,14 @@ public class MUtil {
         }
     }
 
-    public static float Lerp(float delta, float from, float to) {
+
+    /**
+     * @param delta: approach coefficient
+     * @param from: current value
+     * @param to: approached value
+     * @return simple lerp
+     */
+    public static float lerp(float delta, float from, float to) {
         if (delta > 1) return to;
         if (delta < 0) return from;
 

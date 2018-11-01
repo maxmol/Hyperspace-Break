@@ -1,66 +1,70 @@
 package maxmol.igp.classes;
 
-import java.io.File;
-
-// @ Storing game information in a file
+/**
+ * Storing game information in a file
+ */
 public class SaveLoad {
+
+    /**
+     * Some other useless exception
+     */
     public static class SaveLoad_NoFileSpecified extends Exception {
         SaveLoad_NoFileSpecified() {
-            super("Save file has not been set with SaveLoad.SetSaveFile");
+            super("save file has not been set with SaveLoad.setSaveFile");
         }
     }
 
-    private static IFile SaveFile;
+    private static IFile saveFile;
     private static String splitter = "\n";
 
-    public static void SetSaveFile(String filename) throws IFile.IFileExistanceException {
-        SaveFile = new IFile(filename);
+    /**
+     * Sets the file in which everything is saved
+     * @param filename: path to file
+     */
+    public static void setSaveFile(String filename) {
+        saveFile = new IFile(filename);
     }
 
-    public static IFile GetSaveFile() {
-        return SaveFile;
+    /**
+     * @return our set save file
+     */
+    public static IFile getSaveFile() {
+        return saveFile;
     }
 
-    public static void Save() throws SaveLoad_NoFileSpecified {
-        if (SaveFile == null) {
+    /**
+     * Save everything
+     * @throws SaveLoad_NoFileSpecified: we forgot to set the file
+     */
+    public static void save() throws SaveLoad_NoFileSpecified {
+        if (saveFile == null) {
             throw new SaveLoad_NoFileSpecified();
         }
 
         try {
-            SaveFile.Write("");
+            saveFile.write("");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for (String o : Game.GetTable()) {
+        for (String o : Game.getTable()) {
             try {
-                SaveFile.Append(o + splitter);
+                saveFile.append(o + splitter);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    public static void Load() {
+    /**
+     * Get all saved contents and set them to the game
+     */
+    public static void load() {
         try {
-            String fcontent = SaveFile.Read();
-            Game.SetTable(fcontent.split(splitter));
+            String fcontent = saveFile.read();
+            Game.setTable(fcontent.split(splitter));
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static String GetSaveName() {
-        try {
-            return SaveLoad.GetSaveName(SaveFile.GetFile());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    public static String GetSaveName(File f) {
-        String strtext = f.getName();
-        return strtext.substring(0, strtext.length() - 4);
     }
 }

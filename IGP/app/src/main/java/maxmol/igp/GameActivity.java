@@ -31,13 +31,13 @@ import maxmol.igp.classes.Game;
 import maxmol.igp.classes.SaveLoad;
 import maxmol.igp.classes.SaveLoad.SaveLoad_NoFileSpecified;
 
-/*
-@ Buy/Upgrades menu activity. It's called 'GameActivity' only because initially I thought it would be the actual game activity with game canvas and all.
-Now there's 'FlightActivity' for that.
-
-And here you can see how ship upgrades and laser buying work.
-
-Interface is mostly hardcoded here. It may not be the best variant but I wanted it that way. :^)
+/**
+ * Buy/Upgrades menu activity. It's called 'GameActivity' only because initially I thought it would be the actual game activity with game canvas and all.
+ * Now there's 'FlightActivity' for that.
+ *
+ * And here you can see how ship upgrades and laser buying work.
+ *
+ * Interface is mostly hardcoded here. It may not be the best variant but I wanted it that way. :^)
  */
 public class GameActivity extends Activity {
 
@@ -60,7 +60,10 @@ public class GameActivity extends Activity {
     public boolean pressedButton = false;
     private Typeface font;
 
-    // change the focused panel after pressing "Upgrades", "Shop" buttons
+    /**
+     * change the focused panel after pressing "Upgrades", "Shop" buttons
+     * @param id: panel number
+     */
     public void setCurrentPanel(int id) {
         if (id == currentPanel) return;
 
@@ -70,7 +73,11 @@ public class GameActivity extends Activity {
         currentPanel = id;
     }
 
-    // update panel 2 block after game data was modified
+    /**
+     * update panel 2 block after game data was modified
+     * @param id: block id
+     * @param val: level
+     */
     public void panel2_updateBlock(int id, int val) {
         panel2_levels.get(id).setText((val < 5) ? (getResources().getString(R.string.level) + " " + val) : "MAX");
         panel2_costs.get(id).setText((val < 5) ? Game.formatMoney(Game.getUpgradeCost(val)) : "LEVEL");
@@ -95,7 +102,12 @@ public class GameActivity extends Activity {
         }
     }
 
-    // update panel 3 block after game data was modified
+    /**
+     * update panel 3 block after game data was modified
+     * @param id: block id
+     * @param cost: price
+     * @param count: how many we have
+     */
     public void panel3_updateBlock(int id, int cost, Integer count) {
         if (count != null) panel3_counts.get(id).setText("You Have: " + " " + count);
         panel3_costs.get(id).setText(Game.formatMoney(cost));
@@ -120,17 +132,23 @@ public class GameActivity extends Activity {
         }
     }
 
-    // a simple method which we call to update all the info in the activity.
+    /**
+     * a simple method which we call to update all the info in the activity.
+     */
     public void panel2_updateBlocks() {
-        panel2_updateBlock(0, Game.MaxHealthLevel);
-        panel2_updateBlock(1, Game.AttackLevel);
-        panel2_updateBlock(2, Game.BombLevel);
-        panel2_updateBlock(3, Game.CritLevel);
+        panel2_updateBlock(0, Game.maxHealthLevel);
+        panel2_updateBlock(1, Game.attackLevel);
+        panel2_updateBlock(2, Game.bombLevel);
+        panel2_updateBlock(3, Game.critLevel);
 
-        panel3_updateBlock(0, Game.LaserAttackCost, Game.LaserAttackCount);
+        panel3_updateBlock(0, Game.laserAttackCost, Game.laserAttackCount);
     }
 
-    // I used this function to make the app look same on different devices
+    /**
+     * I used this function to make the app look same on different devices
+     * @param dp
+     * @return modified value of pixels
+     */
     public static int dp(float dp) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         float fpixels = metrics.density * dp;
@@ -144,7 +162,10 @@ public class GameActivity extends Activity {
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
-    // we use that to get ids for our newly created UI elements. this method is borrowed from the internet!!!
+    /**
+     * we use that to get ids for our newly created UI elements. this method is borrowed from the internet!!!
+     * @return new view id
+     */
     public static int generateViewId() {
         for (;;) {
             final int result = sNextGeneratedId.get();
@@ -156,7 +177,10 @@ public class GameActivity extends Activity {
         }
     }
 
-    // unified format for textviews and buttons
+    /**
+     * unified format for textviews and buttons
+     * @param view
+     */
     public void uniformat(TextView view) {
         view.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         view.setTypeface(font);
@@ -168,7 +192,11 @@ public class GameActivity extends Activity {
                 ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
-    // create menu type 2
+    /**
+     * create menu type 2
+     * @param title
+     * @param onClickListener
+     */
     public void panel2_createBlock(String title, View.OnClickListener onClickListener) {
         LinearLayout game_panel_1_block_1 = new LinearLayout(this);
         game_panel_1_block_1.setOrientation(LinearLayout.VERTICAL);
@@ -224,7 +252,11 @@ public class GameActivity extends Activity {
         panel2_btns.add(game_panel_1_block_1_btn);
     }
 
-    // create menu type 3
+    /**
+     * create menu type 3
+     * @param title
+     * @param onClickListener
+     */
     public void panel3_createBlock(String title, View.OnClickListener onClickListener) {
         LinearLayout game_panel_1_block_1 = new LinearLayout(this);
         game_panel_1_block_1.setOrientation(LinearLayout.VERTICAL);
@@ -279,8 +311,9 @@ public class GameActivity extends Activity {
         panel3_btns.add(game_panel_1_block_1_btn);
     }
 
-    /*
-    @ When the activity is initialized, we create all basic UI elements.
+    /**
+     * When the activity is initialized, we create all basic UI elements.
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -368,16 +401,16 @@ public class GameActivity extends Activity {
         panel2_createBlock("Max Health", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.MaxHealthLevel >= 5) {
+                if (Game.maxHealthLevel >= 5) {
                     soundPool.play(button10, 1, 1, 0, 0, 1);
                     return;
                 }
 
-                Integer needMoney = Game.getUpgradeCost(Game.MaxHealthLevel);
+                Integer needMoney = Game.getUpgradeCost(Game.maxHealthLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
                     int lasthealth = Game.getMaxHealth();
-                    Game.MaxHealthLevel++;
+                    Game.maxHealthLevel++;
                     Game.setHealth(Game.getHealth() + Game.getMaxHealth() - lasthealth);
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
@@ -391,15 +424,15 @@ public class GameActivity extends Activity {
         panel2_createBlock("Attack", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.AttackLevel >= 5) {
+                if (Game.attackLevel >= 5) {
                     soundPool.play(button10, 1, 1, 0, 0, 1);
                     return;
                 }
 
-                Integer needMoney = Game.getUpgradeCost(Game.AttackLevel);
+                Integer needMoney = Game.getUpgradeCost(Game.attackLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
-                    Game.AttackLevel++;
+                    Game.attackLevel++;
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
                 else {
@@ -412,15 +445,15 @@ public class GameActivity extends Activity {
         panel2_createBlock("Laser Beam", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.BombLevel >= 5) {
+                if (Game.bombLevel >= 5) {
                     soundPool.play(button10, 1, 1, 0, 0, 1);
                     return;
                 }
 
-                Integer needMoney = Game.getUpgradeCost(Game.BombLevel);
+                Integer needMoney = Game.getUpgradeCost(Game.bombLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
-                    Game.BombLevel++;
+                    Game.bombLevel++;
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
                 else {
@@ -433,15 +466,15 @@ public class GameActivity extends Activity {
         panel2_createBlock("Energy Ball", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.CritLevel >= 5) {
+                if (Game.critLevel >= 5) {
                     soundPool.play(button10, 1, 1, 0, 0, 1);
                     return;
                 }
 
-                Integer needMoney = Game.getUpgradeCost(Game.CritLevel);
+                Integer needMoney = Game.getUpgradeCost(Game.critLevel);
                 if (Game.getMoney() >= needMoney) {
                     Game.takeMoney(needMoney);
-                    Game.CritLevel++;
+                    Game.critLevel++;
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
                 else {
@@ -455,9 +488,9 @@ public class GameActivity extends Activity {
         panel3_createBlock("Laser Attack", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Game.getMoney() >= Game.LaserAttackCost) {
-                    Game.LaserAttackCount++;
-                    Game.takeMoney(Game.LaserAttackCost);
+                if (Game.getMoney() >= Game.laserAttackCost) {
+                    Game.laserAttackCount++;
+                    Game.takeMoney(Game.laserAttackCost);
                     soundPool.play(blip1, 1, 1, 0, 0, 1);
                 }
                 else {
@@ -471,8 +504,8 @@ public class GameActivity extends Activity {
         panel2_updateBlocks();
     }
 
-    /*
-    @ Play background music again and update money balance after the app was opened
+    /**
+     * Play background music again and update money balance after the app was opened
      */
     @Override
     protected void onResume() {
@@ -488,22 +521,22 @@ public class GameActivity extends Activity {
         Game.moneyTextView.setText(Game.formatMoney(Game.getMoney()));
     }
 
-    /*
-    @ This runs after the game is stopped. Save progress!
+    /**
+     * This runs after the game is stopped. save progress!
      */
     @Override
     protected void onStop() {
         super.onStop();
 
         try {
-            SaveLoad.Save();
+            SaveLoad.save();
         } catch (SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
             saveLoad_noFileSpecified.printStackTrace();
         }
     }
 
-    /*
-    @ If the application was minimized we pause the game and music
+    /**
+     * If the application was minimized we pause the game and music
      */
     @Override
     protected void onPause() {

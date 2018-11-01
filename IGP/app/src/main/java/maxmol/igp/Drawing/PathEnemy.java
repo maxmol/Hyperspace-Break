@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import maxmol.igp.classes.BulletGenerator;
 import maxmol.igp.classes.Vec2D;
 
-// An enemy that uses a specific movement and rotation path.
+/**
+ * An enemy that uses a specific movement and rotation path.
+ */
 public class PathEnemy extends Enemy {
     private LinkedList<Vec2D> movePath = new LinkedList<>();
 
@@ -14,8 +16,8 @@ public class PathEnemy extends Enemy {
 
         for (Vec2D p: positions) {
             if (percentage) {
-                p.x = p.x * GameDraw.context.ScrW / 100;
-                p.y = p.y * GameDraw.context.ScrH / 100;
+                p.x = p.x * GameDraw.context.scrW / 100;
+                p.y = p.y * GameDraw.context.scrH / 100;
             }
 
             movePath.add(p);
@@ -27,8 +29,8 @@ public class PathEnemy extends Enemy {
 
         for (Vec2D p: positions) {
             if (percentage) {
-                p.x = p.x * GameDraw.context.ScrW / 100;
-                p.y = p.y * GameDraw.context.ScrH / 100;
+                p.x = p.x * GameDraw.context.scrW / 100;
+                p.y = p.y * GameDraw.context.scrH / 100;
             }
 
             movePath.add(p);
@@ -39,18 +41,18 @@ public class PathEnemy extends Enemy {
     protected void enemyMove() {
         if (movePath.isEmpty()) return;
 
-        if (getPos().minus(movePath.peek()).Length() < this.speed * 2) {
+        if (getPos().minus(movePath.peek()).length() < this.speed * 2) {
             setPos(movePath.poll());
             return;
         }
 
-        Move(movePath.peek().minus(getPos()).GetNormalized().mul(this.speed));
+        move(movePath.peek().minus(getPos()).getNormalized().mul(this.speed));
     }
 
     public void addPathPos(Vec2D p, boolean percentage) {
         if (percentage) {
-            p.x = p.x * GameDraw.context.ScrW / 100;
-            p.y = p.y * GameDraw.context.ScrH / 100;
+            p.x = p.x * GameDraw.context.scrW / 100;
+            p.y = p.y * GameDraw.context.scrH / 100;
         }
 
         movePath.add(p);

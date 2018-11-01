@@ -1,14 +1,9 @@
 package maxmol.igp;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,10 +14,9 @@ import maxmol.igp.classes.IFile;
 import maxmol.igp.classes.SaveLoad;
 import maxmol.igp.classes.Stages;
 
-/*
-@ The first activity created after we launch the application.
-
-We init basic SAVE/LOAD data, start menu theme and init buttons for starting, continuing or resetting the game.
+/**
+ * The first activity created after we launch the application.
+ * We init basic SAVE/LOAD data, start menu theme and init buttons for starting, continuing or resetting the game.
  */
 public class MainMenu extends Activity {
 
@@ -55,15 +49,11 @@ public class MainMenu extends Activity {
 
         String filePath = context.getFilesDir() + "/save.txt";
 
-        try {
-            f.Open(filePath);
-        } catch (IFile.IFileExistanceException e) {
-            e.printStackTrace();
-        }
+        f.open(filePath);
 
         try {
-            SaveLoad.SetSaveFile(filePath);
-            System.out.println(SaveLoad.GetSaveFile().GetPath());
+            SaveLoad.setSaveFile(filePath);
+            System.out.println(SaveLoad.getSaveFile().getPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,11 +61,11 @@ public class MainMenu extends Activity {
         Game.reset();
 
         try {
-            if (f.GetFile().exists()) {
-                SaveLoad.Load();
+            if (f.getFile().exists()) {
+                SaveLoad.load();
             }
             else {
-                SaveLoad.Save();
+                SaveLoad.save();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,7 +122,7 @@ public class MainMenu extends Activity {
         }
 
         try {
-            SaveLoad.Save();
+            SaveLoad.save();
         } catch (SaveLoad.SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
             saveLoad_noFileSpecified.printStackTrace();
         }

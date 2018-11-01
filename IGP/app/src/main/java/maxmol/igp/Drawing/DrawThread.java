@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -14,10 +15,11 @@ import maxmol.igp.GameActivity;
 import maxmol.igp.R;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.SaveLoad;
 import maxmol.igp.classes.Stages;
 
-// This is the drawing and thinking machine. It calls and draws all entities in the game.
+/**
+ * This is the drawing and thinking machine. It calls and draws all entities in the game.
+ */
 public class DrawThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private boolean running = true;
@@ -49,10 +51,10 @@ public class DrawThread extends Thread {
     }
 
     public void stageSleep(int intervals) {
-        GameDraw.context.stageSleeping += MUtil.Clamp(intervals, 0);
+        GameDraw.context.stageSleeping += MUtil.clamp(intervals, 0);
     }
 
-    private void StageTick() {
+    private void stageTick() {
         if (GameDraw.context.stageSleeping > 0) {
             GameDraw.context.stageSleeping--;
         }
@@ -71,7 +73,7 @@ public class DrawThread extends Thread {
 
             // --- TickStuff ---
 
-            if (!GameDraw.context.paused) StageTick();
+            if (!GameDraw.context.paused) stageTick();
             sysTime = System.currentTimeMillis();
 
             // --- Core Stuff ---
@@ -81,23 +83,23 @@ public class DrawThread extends Thread {
                     GameDraw.context.AddEntity(new BackgroundStar());
                 }
 
-                // - Tick
+                // - tick
                 for (Entity ent : GameDraw.context.getEntities()) {
-                    ent.Tick();
+                    ent.tick();
                 }
             }
 
             Paint p = new Paint();
             p.setAntiAlias(true);
-            p.setColor(Color.rgb(0, 0, 0));
+            p.setColor(Color.rgb(21, 5, 28));
             canvas.drawPaint(p);
 
             if (GameDraw.context.shouldSort) {
-                GameDraw.context.SortEntities();
+                GameDraw.context.sortEntities();
             }
 
             for (Entity ent : GameDraw.context.getEntities()) {
-                ent.Draw(canvas);
+                ent.draw(canvas);
             }
 
             p.setColor(Color.WHITE);
@@ -105,36 +107,64 @@ public class DrawThread extends Thread {
             p.setTextSize(cp(60));
             canvas.drawText(Game.formatMoney(Stages.getMoney()), cp(25), cp(80), p);
             if (Stages.isArcade())
-                canvas.drawText("HIGH: " + Game.formatMoney(Game.HighScore), cp(25), cp(160), p);
+                canvas.drawText("HIGH: " + Game.formatMoney(Game.highScore), cp(25), cp(160), p);
 
             p.setColor(Color.rgb(16, 18, 20));
-            canvas.drawRect(0, GameDraw.context.ScrH, GameDraw.context.ScrW, GameDraw.context.ScrH + cp(200), p);
+            canvas.drawRect(0, GameDraw.context.scrH, GameDraw.context.scrW, GameDraw.context.scrH + cp(200), p);
 
             for (SuperVGUI v : GameDraw.context.getVGUIObjects()) {
-                v.Draw(canvas);
+                v.draw(canvas);
             }
 
-            p.setColor(Color.GREEN);
+            p.setColor(Color.rgb(0, 194, 14));
             try {
-                lerpHealth = MUtil.Lerp(0.15f, lerpHealth, Game.getHealth());
-                canvas.drawRect(
-                        cp(200),
-                        GameDraw.context.ScrH + cp(154),
-                        cp(200) + MUtil.Clamp(cp(300) * (lerpHealth/Game.getMaxHealth()), 0),
-                        GameDraw.context.ScrH + cp(170), p);
+                lerpHealth = MUtil.lerp(0.15f, lerpHealth, Game.getHealth());
+                if (lerpHealth > 0.5f) {
+
+                    float left = cp(200);
+                    float top = GameDraw.context.scrH + cp(144);
+                    float right = cp(200) + MUtil.clamp(cp(240) * (lerpHealth / Game.getMaxHealth()), 0);
+                    float bottom = GameDraw.context.scrH + cp(160);
+
+                    canvas.drawRect(
+                            left,
+                            top,
+                            right,
+                            bottom,
+                            p);
+
+                    Path path = new Path();
+                    path.moveTo(right + cp(10), top);
+                    path.lineTo(right, bottom);
+                    path.lineTo(right, top);
+                    canvas.drawPath(path, p);
+                }
             }
             catch (Exception e) {
 
             }
 
-            p.setColor(Color.BLUE);
+            p.setColor(Color.rgb(0, 81, 216));
             try {
-                lerpArmor = MUtil.Lerp(0.15f, lerpArmor, GameDraw.context.ship.armor);
-                canvas.drawRect(
-                        cp(200),
-                        GameDraw.context.ScrH + cp(124),
-                        cp(200) + MUtil.Clamp(cp(300) * (lerpArmor / GameDraw.context.ship.maxArmor), 0),
-                        GameDraw.context.ScrH + cp(140), p);
+                lerpArmor = MUtil.lerp(0.15f, lerpArmor, GameDraw.context.ship.armor);
+                if (lerpArmor > 0.5f) {
+                    float left = cp(200);
+                    float top = GameDraw.context.scrH + cp(114);
+                    float right = cp(200) + MUtil.clamp(cp(280) * (lerpArmor / GameDraw.context.ship.maxArmor), 0);
+                    float bottom = GameDraw.context.scrH + cp(130);
+                    canvas.drawRect(
+                            left,
+                            top,
+                            right,
+                            bottom,
+                            p);
+
+                    Path path = new Path();
+                    path.moveTo(right + cp(10), top);
+                    path.lineTo(right, bottom);
+                    path.lineTo(right, top);
+                    canvas.drawPath(path, p);
+                }
             }
             catch (Exception e) {
 
@@ -147,11 +177,11 @@ public class DrawThread extends Thread {
                 p.setTextSize(cp(64));
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTypeface(unlearn);
-                canvas.drawText("Paused", GameDraw.context.ScrW / 2, cp(120), p);
+                canvas.drawText("Paused", GameDraw.context.scrW / 2, cp(120), p);
             }
 
             long deltaTime = System.currentTimeMillis() - sysTime + 1;
-            //canvas.drawText(1000/deltaTime + " FPS", GameDraw.context.ScrW/10, cp(120), p); // FPS counter
+            //canvas.drawText(1000/deltaTime + " FPS", GameDraw.context.scrW/10, cp(120), p); // FPS counter
 
             surfaceHolder.unlockCanvasAndPost(canvas);
 
@@ -169,7 +199,7 @@ public class DrawThread extends Thread {
                 }
                 else {
                     for (Entity ent : GameDraw.context.getEntities()) {
-                        ent.Remove();
+                        ent.remove();
                     }
 
                     FlightActivity.context.runOnUiThread(new Runnable() {

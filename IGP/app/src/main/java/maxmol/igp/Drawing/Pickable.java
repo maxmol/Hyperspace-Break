@@ -9,7 +9,9 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// Object that can be picked
+/**
+ * Object that can be picked up
+ */
 public class Pickable extends Entity {
     public Vec2D velocity;
     public static int radius;
@@ -27,30 +29,30 @@ public class Pickable extends Entity {
     }
 
     public void collect() {
-        this.Remove();
+        this.remove();
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         if (Math.abs(velocity.x) > 1 || Math.abs(velocity.y) > 1) {
             velocity.multiply(0.95);
         }
         else velocity = Vec2D.zero;
 
-        if (GameDraw.context.ship.getPos().Distance(this.getPos()) < cp(200)) {
+        if (GameDraw.context.ship.getPos().distance(this.getPos()) < cp(200)) {
             Vec2D t = GameDraw.context.ship.getPos().minus(this.getPos());
-            velocity = t.GetNormalized().mul(cp(200.0)).minus(t).mul(0.1);
+            velocity = t.getNormalized().mul(cp(200.0)).minus(t).mul(0.1);
         }
 
-        Move(velocity.plus(new Vec2D(0, cp(4))));
+        move(velocity.plus(new Vec2D(0, cp(4))));
 
-        if (getPos().y > GameDraw.context.ScrH + cp(50)) {
-            Remove();
+        if (getPos().y > GameDraw.context.scrH + cp(50)) {
+            remove();
         }
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         float posx = (float) getPos().x, posy = (float) getPos().y;
 
         Paint p = new Paint();

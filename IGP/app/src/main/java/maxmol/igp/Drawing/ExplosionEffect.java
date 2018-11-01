@@ -15,7 +15,9 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// Boom!
+/**
+ * Boom!
+ */
 public class ExplosionEffect extends Entity {
     private double size = 1;
     private int updateRate;
@@ -61,19 +63,19 @@ public class ExplosionEffect extends Entity {
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         if (bitmap == null) return;
 
         if (--updateCounter < 0) {
             updateCounter = updateRate;
             frame++;
 
-            if (frame > maxFrames) Remove();
+            if (frame > maxFrames) remove();
         }
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (bitmap == null) return;
 
         int x = (int) getPos().x, y = (int) getPos().y;

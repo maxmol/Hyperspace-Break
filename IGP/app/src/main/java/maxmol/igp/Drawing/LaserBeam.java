@@ -3,21 +3,18 @@ package maxmol.igp.Drawing;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.Region;
 import android.media.AudioManager;
 import android.media.SoundPool;
 
-import java.util.ArrayList;
-
 import maxmol.igp.R;
-import maxmol.igp.classes.MUtil;
 import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// This lasers are cool.
+/**
+ * Lasers are cool.
+ */
 public class LaserBeam extends Entity {
     public int dieTime = 250;
     public int damage = 5;
@@ -57,62 +54,71 @@ public class LaserBeam extends Entity {
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         if (getOwner() != null) {
             if (getOwner() instanceof Enemy && ((Enemy) getOwner()).getHealth() <= 0) {
-                Remove();
+                remove();
             }
 
             setPos(getOwner().getPos());
         }
 
-        length = (int) Math.sqrt(GameDraw.context.ScrH * GameDraw.context.ScrH + GameDraw.context.ScrW * GameDraw.context.ScrW); // Диагональ экрана - максимальная возможная длина лазера.
+        length = (int) Math.sqrt(GameDraw.context.scrH * GameDraw.context.scrH + GameDraw.context.scrW * GameDraw.context.scrW);
 
         if (--dieTime <= 0) {
-            Remove();
+            remove();
         }
 
-        Vec2D directional = new Vec2D(0, length).GetRotated(angle - 90);
-        Vec2D right = new Vec2D(wide, 0).GetRotated(angle - 90);
+        Vec2D directional = new Vec2D(0, length).getRotated(angle - 90);
+        Vec2D right = new Vec2D(wide, 0).getRotated(angle - 90);
+
+        Vec2D p1 = getPos().plus(right);
+        Vec2D p2 = getPos().minus(right);
+        Vec2D p3 = getPos().plus(directional).minus(right);
+        Vec2D p4 = getPos().plus(directional).plus(right);
 
         setPointsMesh(new Vec2D[]{
-                getPos().plus(right),
-                getPos().minus(right),
-                getPos().plus(directional).minus(right),
-                getPos().plus(directional).plus(right),
+                p1,
+                p2,
+                p3,
+                p4,
         });
 
-        length = GameDraw.context.ScrH;
+        length = GameDraw.context.scrH;
 
         if (getOwner() instanceof Enemy) {
-            entityHit(GameDraw.context.ship);
+            if (getRegion().op(GameDraw.context.ship.shipRect, Region.Op.INTERSECT))
+                entityHit(GameDraw.context.ship);
         }
         else {
             for (Entity e : GameDraw.context.getEntities()) {
+                setPointsMesh(new Vec2D[]{
+                        p1.minus(e.getPos()),
+                        p2.minus(e.getPos()),
+                        p3.minus(e.getPos()),
+                        p4.minus(e.getPos()),
+                });
+
                 if (!e.isPhysicsObject()) continue;
                 if (this.getOwner() == e) continue;
 
-                if (entityHit(e)) {
+                if (getRegion().op(e.getRegion(), Region.Op.INTERSECT)) {
+                    entityHit(e);
                     break;
                 }
             }
         }
     }
 
-    private boolean entityHit(Entity e) {
-        if (getRegion().contains((int)e.getPos().x, (int)e.getPos().y)) {
-            float len = (float) Math.abs(e.getPos().Distance(getPos()));
-            if (len < length) length = len;
-            e.takeDamage(1);
-            GameDraw.context.AddEntity(new SparksEffect(e.getPos(), (int) (Math.random() * 3) + 1, 1, 0, 5, 1, Color.rgb(255, 196, 64)));
-            return true;
-        }
-
-        return false;
+    private void entityHit(Entity e) {
+        float len = (float) Math.abs(e.getPos().distance(getPos()));
+        if (len < length) length = len;
+        e.takeDamage(1);
+        GameDraw.context.AddEntity(new SparksEffect(e.getPos(), (int) (Math.random() * 3) + 1, 1, 0, 5, 1, Color.rgb(255, 196, 64)));
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
         p.setColor(color);
         p.setAntiAlias(true);
@@ -138,10 +144,10 @@ public class LaserBeam extends Entity {
     }
 
     @Override
-    public void Remove() {
+    public void remove() {
         soundPool.stop(laserSound);
         System.out.println("test sound stop");
 
-        super.Remove();
+        super.remove();
     }
 }

@@ -5,7 +5,9 @@ import android.view.MotionEvent;
 
 import maxmol.igp.classes.Vec2D;
 
-// This is the base class for UI objects in surfaceview. Buttons, Labels, Forms etc. I'll use this in my future projects
+/**
+ * This is the base class for UI objects in surfaceview. Buttons, Labels, Forms etc. I'll use this in my future projects
+ */
 public abstract class SuperVGUI {
     private Vec2D pos;
     protected boolean pressed;
@@ -22,22 +24,22 @@ public abstract class SuperVGUI {
         this.pos = pos;
     }
 
-    public abstract void Draw(Canvas canvas);
+    public abstract void draw(Canvas canvas);
 
-    public boolean CheckTouch(MotionEvent event, int pointerId) {
+    public boolean checkTouch(MotionEvent event, int pointerId) {
         return false;
     }
 
-    public void OnTouch(MotionEvent event) {
+    public void onTouch(MotionEvent event) {
 
     }
 
-    public void OnDown(MotionEvent event) {
+    public void onDown(MotionEvent event) {
         this.pressed = true;
-        this.OnTouch(event);
+        this.onTouch(event);
     }
 
-    public void OnRelease(MotionEvent event) {
+    public void onRelease(MotionEvent event) {
         this.pressed = false;
     }
 

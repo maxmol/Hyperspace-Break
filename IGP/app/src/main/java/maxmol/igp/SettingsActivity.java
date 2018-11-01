@@ -27,14 +27,14 @@ public class SettingsActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         final Button button_difficulty = findViewById(R.id.settings_difficulty);
-        button_difficulty.setText("Difficulty: " + Game.Difficulties[Game.Difficulty]);
+        button_difficulty.setText("difficulty: " + Game.difficulties[Game.difficulty]);
         button_difficulty.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Game.Difficulty = (Game.Difficulty + 1) % Game.Difficulties.length;
-                button_difficulty.setText("Difficulty: " + Game.Difficulties[Game.Difficulty]);
+                Game.difficulty = (Game.difficulty + 1) % Game.difficulties.length;
+                button_difficulty.setText("difficulty: " + Game.difficulties[Game.difficulty]);
                 try {
-                    SaveLoad.Save();
+                    SaveLoad.save();
                 } catch (SaveLoad.SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
                     saveLoad_noFileSpecified.printStackTrace();
                 }
@@ -50,14 +50,14 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View view) {
                 new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Remove all progress")
+                        .setTitle("remove all progress")
                         .setMessage("Are you sure you want to reset all progress you made?")
                         .setPositiveButton("Reset", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Game.reset();
                                 try {
-                                    SaveLoad.Save();
+                                    SaveLoad.save();
                                 } catch (SaveLoad.SaveLoad_NoFileSpecified saveLoad_noFileSpecified) {
                                     saveLoad_noFileSpecified.printStackTrace();
                                 }

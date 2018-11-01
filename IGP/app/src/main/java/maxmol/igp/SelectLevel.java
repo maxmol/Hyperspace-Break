@@ -20,8 +20,8 @@ import android.widget.LinearLayout;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.Stages;
 
-/*
-@ An activity where we can chose what level to start. (also freemode)
+/**
+ * An activity where we can chose what level to start. (also freemode)
  */
 public class SelectLevel extends AppCompatActivity {
     public static SelectLevel context;

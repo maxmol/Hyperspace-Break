@@ -14,15 +14,18 @@ import maxmol.igp.Drawing.BackgroundStar;
 import maxmol.igp.Drawing.Entity;
 import maxmol.igp.classes.Vec2D;
 
-/*
- @ A simple View we use to create moving stars in main menu.
-  */
+/**
+ * A simple View we use to create moving stars in main menu.
+ */
 public class StarsBackground extends View {
     public ArrayList<Entity> entities = new ArrayList<>();
 
     public StarsBackground StarsBackground;
+    private Paint p;
 
-    // @ Create timer for spawning stars
+    /**
+     * Create timer for spawning stars
+     */
     private void initTimer() {
         CountDownTimer timer = new CountDownTimer(Integer.MAX_VALUE, 50) {
             public void onTick(long millisUntilFinished) {
@@ -35,10 +38,16 @@ public class StarsBackground extends View {
         timer.start();
     }
 
+    private void initPaint() {
+        p = new Paint();
+        p.setColor(Color.rgb(21, 5, 28));
+    }
+
     public StarsBackground(Context context) {
         super(context);
 
         StarsBackground = this;
+        initPaint();
 
         initTimer();
     }
@@ -47,6 +56,7 @@ public class StarsBackground extends View {
         super(context, attrs);
 
         StarsBackground = this;
+        initPaint();
 
         initTimer();
     }
@@ -66,8 +76,6 @@ public class StarsBackground extends View {
             }
         }
 
-        Paint p = new Paint();
-        p.setColor(Color.rgb(0, 0, 0));
         canvas.drawPaint(p);
 
         if (Math.random() < BackgroundStar.SPAWN_CHANCE) {
@@ -75,11 +83,11 @@ public class StarsBackground extends View {
         }
 
         for (Entity ent: (ArrayList<Entity>) entities.clone()) {
-            ent.Tick();
+            ent.tick();
         }
 
         for (Entity ent : entities) {
-            ent.Draw(canvas);
+            ent.draw(canvas);
         }
     }
 }

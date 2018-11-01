@@ -8,7 +8,9 @@ import android.view.MotionEvent;
 
 import maxmol.igp.classes.Vec2D;
 
-// A button that can be pressed.
+/**
+ * A button that can be pressed.
+ */
 public class SuperButton extends SuperVGUI {
     public interface SuperPressEvent {
         void onPress(SuperButton self, MotionEvent event);
@@ -72,7 +74,7 @@ public class SuperButton extends SuperVGUI {
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         Paint p = new Paint();
 
         int drawColor = color;
@@ -95,13 +97,13 @@ public class SuperButton extends SuperVGUI {
     }
 
     @Override
-    public boolean CheckTouch(MotionEvent event, int pointerId) {
+    public boolean checkTouch(MotionEvent event, int pointerId) {
         return event.getX(pointerId) >= getPos().x && event.getX(pointerId) <= getPos().x + width && event.getY(pointerId) >= getPos().y && event.getY(pointerId) <= getPos().y + height;
     }
 
     @Override
-    public void OnDown(MotionEvent event) {
-        super.OnDown(event);
+    public void onDown(MotionEvent event) {
+        super.onDown(event);
 
         if (pressEvent != null) pressEvent.onPress(this, event);
     }

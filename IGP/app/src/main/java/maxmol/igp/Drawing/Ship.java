@@ -19,11 +19,13 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// This is the player.
+/**
+ * This is the player.
+ */
 public class Ship extends Entity {
     private static class CritBullet extends Bullet {
         @Override
-        public void Draw(Canvas canvas) {
+        public void draw(Canvas canvas) {
             Paint p = new Paint();
             p.setColor(Color.argb(128, 255, 220, 255));
             canvas.drawCircle((float) getPos().x, (float) getPos().y, cp(25f), p);
@@ -71,11 +73,11 @@ public class Ship extends Entity {
 
     public Ship() {
         movePad = new DynamicDPad();
-        movePad.setPos(new Vec2D(GameDraw.context.ScrW * 0.15, GameDraw.context.ScrH * 0.8));
-        GameDraw.context.AddVGUI(movePad);
+        movePad.setPos(new Vec2D(GameDraw.context.scrW * 0.15, GameDraw.context.scrH * 0.8));
+        GameDraw.context.addVGUI(movePad);
 
 
-        setPos(new Vec2D(GameDraw.context.ScrW/2, GameDraw.context.ScrH * 0.8));
+        setPos(new Vec2D(GameDraw.context.scrW /2, GameDraw.context.scrH * 0.8));
 
         initBulletGenerators();
 
@@ -104,7 +106,7 @@ public class Ship extends Entity {
         bulletGenerators[0].bulletOffset.y = cp(-30);
 
         boolean additionalBullets = false;
-        switch (Game.AttackLevel) {
+        switch (Game.attackLevel) {
             case 5: {
                 additionalBullets = true;
             }
@@ -176,7 +178,7 @@ public class Ship extends Entity {
         bulletGenerators[2].bulletDamage = 5;
         bulletGenerators[2].bulletOffset.y = cp(-40);
 
-        switch (Game.CritLevel) {
+        switch (Game.critLevel) {
             case 5: {
                 bulletGenerators[2].bulletDamage += 1;
                 bulletGenerators[2].bulletSpeed += 5;
@@ -202,13 +204,13 @@ public class Ship extends Entity {
 
     public boolean activateLaser() {
         if (laserBeam == null || laserBeam.isDead()) {
-            if (Game.LaserAttackCount > 0) {
-                laserBeam = new LaserBeam(250 + Game.BombLevel * 50, 1, 20);
+            if (Game.laserAttackCount > 0) {
+                laserBeam = new LaserBeam(250 + Game.bombLevel * 50, 1, 20);
                 laserBeam.setOwner(this);
                 laserBeam.angle = -90;
                 GameDraw.context.AddEntity(laserBeam);
 
-                Game.LaserAttackCount--;
+                Game.laserAttackCount--;
                 return true;
             }
         }
@@ -217,7 +219,7 @@ public class Ship extends Entity {
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         double posX = getPos().x, posY = getPos().y;
         shipRect.set((int) (cp(-38) + posX), (int) (cp(-38) + posY), (int) (cp(38) + posX), (int) (cp(45) + posY));
         for (BulletGenerator bg: bulletGenerators) {
@@ -227,13 +229,13 @@ public class Ship extends Entity {
         for (Entity e: GameDraw.context.getEntities()) {
             if (!(e instanceof Pickable)) continue;
 
-            if (e.getPos().Distance(this.getPos()) < cp(50))
+            if (e.getPos().distance(this.getPos()) < cp(50))
             {
                 ((Pickable) e).collect();
             }
         }
 
-        Move(movePad.getOutput().mul(speed));
+        move(movePad.getOutput().mul(speed));
 
         for (BulletGenerator b: bulletGenerators) {
             if (b != null) {
@@ -249,7 +251,7 @@ public class Ship extends Entity {
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         canvas.save();
         canvas.rotate(angle, (float) getPos().x, (float) getPos().y);
 
@@ -269,8 +271,8 @@ public class Ship extends Entity {
             Particle par = new Particle();
             par.pos = getPos().plus(new Vec2D(0, cp(75)));
             par.duration = .25f;
-            par.startsize = cp(8);
-            par.endsize = cp(4);
+            par.startSize = cp(8);
+            par.endSize = cp(4);
             par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
             par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
             par.fric = 0.95;
@@ -279,8 +281,8 @@ public class Ship extends Entity {
             par = new Particle();
             par.pos = getPos().plus(new Vec2D(-50, cp(40)));
             par.duration = .25f;
-            par.startsize = cp(5);
-            par.endsize = cp(3);
+            par.startSize = cp(5);
+            par.endSize = cp(3);
             par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
             par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
             par.fric = 0.95;
@@ -289,8 +291,8 @@ public class Ship extends Entity {
             par = new Particle();
             par.pos = getPos().plus(new Vec2D(50, cp(40)));
             par.duration = .25f;
-            par.startsize = cp(5);
-            par.endsize = cp(3);
+            par.startSize = cp(5);
+            par.endSize = cp(3);
             par.color = Color.HSVToColor(new float[] {35 + (float)(Math.random() * 20), 97, 100});
             par.vel = new Vec2D(cp(2 - Math.random() * 4), cp(5 + Math.random() * 10));
             par.fric = 0.95;
@@ -328,9 +330,9 @@ public class Ship extends Entity {
             long curtime = System.currentTimeMillis();
             armorCooldown = curtime + 5000;
 
-            hp = (int) (hp * (Stages.isArcade() ? 1 : 1 + Game.Difficulty/5f));
+            hp = (int) (hp * (Stages.isArcade() ? 1 : 1 + Game.difficulty /5f));
 
-            armor = MUtil.Clamp(armor - hp, -Game.getMaxHealth(), maxArmor);
+            armor = MUtil.clamp(armor - hp, -Game.getMaxHealth(), maxArmor);
 
             if (soundCoolDown < curtime) {
                 soundCoolDown = curtime + 100;
@@ -352,7 +354,7 @@ public class Ship extends Entity {
                         }
                         Stages.collectMoney(-Stages.getMoney());
                     }
-                    Remove();
+                    remove();
                 }
             }
         }
@@ -378,8 +380,8 @@ public class Ship extends Entity {
     }
 
     @Override
-    public void Remove() {
-        if (laserBeam != null) laserBeam.Remove();
-        super.Remove();
+    public void remove() {
+        if (laserBeam != null) laserBeam.remove();
+        super.remove();
     }
 }

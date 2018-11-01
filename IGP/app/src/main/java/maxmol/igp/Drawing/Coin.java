@@ -1,24 +1,23 @@
 package maxmol.igp.Drawing;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
 import android.media.AudioManager;
 import android.media.SoundPool;
-
 import maxmol.igp.R;
 import maxmol.igp.classes.Stages;
 import maxmol.igp.classes.Vec2D;
 
-import static maxmol.igp.Drawing.GameDraw.cp;
-
-// Money that is spawned after killing the enemy
+/**
+ * Money spawned after killing the enemy
+ */
 public class Coin extends Pickable {
     public int count = 1;
     private SoundPool soundPool;
     private int coinSound;
 
+    /**
+     * customize the Pickable defaults
+     */
     public void initVars() {
         pickableText = "¤";
         pickableColor = Color.rgb(227, 48, 200);;
@@ -38,7 +37,9 @@ public class Coin extends Pickable {
         initVars();
     }
 
-    // we picked up the coin
+    /**
+     * we picked up the coin
+     */
     public void collect() {
         if (this.getCount() != -1) {
             Stages.collectMoney(this.getCount());

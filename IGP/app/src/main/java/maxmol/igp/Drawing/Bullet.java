@@ -1,21 +1,18 @@
 package maxmol.igp.Drawing;
 
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Region;
-
-import java.util.ArrayList;
 
 import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.Stages;
 import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// Just a bullet. It can be spawned by bulletgenerators.
+/**
+ * Just a bullet. It can be spawned by bulletgenerators.
+ */
 public class Bullet extends Entity{
     public Vec2D velocity;
     public Vec2D startVelocity;
@@ -31,7 +28,7 @@ public class Bullet extends Entity{
     protected void initPaint() {
         bulletPaint = new Paint();
         bulletPaint.setAntiAlias(true);
-        //bulletPaint.setMaskFilter(new BlurMaskFilter(cp(1), BlurMaskFilter.Blur.NORMAL));
+        //bulletPaint.setMaskFilter(new BlurMaskFilter(cp(4), BlurMaskFilter.Blur.NORMAL));
     }
 
     public Bullet() {
@@ -85,18 +82,18 @@ public class Bullet extends Entity{
     }
 
     public void setDamage(int damage) {
-        this.damage = MUtil.Clamp(damage, 0);
+        this.damage = MUtil.clamp(damage, 0);
     }
 
     @Override
-    public void Tick() {
-        Move(velocity);
+    public void tick() {
+        move(velocity);
 
         velocity.add(startVelocity.mul(acceleration));
-        if (curving != 0) velocity.Rotate(curving);
+        if (curving != 0) velocity.rotate(curving);
 
-        if (getPos().y > GameDraw.context.ScrH + cp(5) || getPos().y < cp(-5) || getPos().x > GameDraw.context.ScrW + cp(5) || getPos().x < cp(-5)) {
-            Remove();
+        if (getPos().y > GameDraw.context.scrH + cp(5) || getPos().y < cp(-5) || getPos().x > GameDraw.context.scrW + cp(5) || getPos().x < cp(-5)) {
+            remove();
         }
 
         if (this.getOwner() instanceof Enemy || this.getOwner() instanceof Bullet) {
@@ -107,7 +104,7 @@ public class Bullet extends Entity{
             for (Entity e : GameDraw.context.getEntities()) {
                 if (!e.isPhysicsObject()) continue;
                 if (this.getOwner() == e) continue;
-                if (e.getPos().Distance(this.getPos()) > e.getCollisionRadius()) continue;
+                if (e.getPos().distance(this.getPos()) > e.getCollisionRadius()) continue;
 
                 if (e.getRegion().contains((int) (getPos().x - e.getPos().x), (int) (getPos().y - e.getPos().y))) {
                     hit(e);
@@ -116,17 +113,18 @@ public class Bullet extends Entity{
         }
     }
 
-    // @ Runs when a bullet hits an object
-    // @params
-    //      The object which the bullet just hit: Entity
+    /**
+     * Runs when a bullet hits an object
+     * @param e: The object which the bullet just hit: Entity
+     */
     public void hit(Entity e) {
         if (e != null) e.takeDamage(getDamage());
         GameDraw.context.AddEntity(new SparksEffect(getPos(), 3 + (int)(Math.random() * 3), 1, 0, 6, 1, this.getOwner() instanceof Ship ? Color.rgb(235, 144, 40) : Color.rgb(64, 111, 230)));
-        Remove();
+        remove();
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         if (this.getOwner() instanceof Ship) {
             bulletPaint.setColor(Color.rgb(227, 48, 200));
         }
@@ -134,16 +132,18 @@ public class Bullet extends Entity{
             bulletPaint.setColor(Color.rgb(64, 111, 230));
         }
 
-        Vec2D normVel = velocity.GetNormalized();
+        Vec2D normVel = velocity.getNormalized();
         Vec2D drawLen = normVel.mul(cp(bulletLen));
-        Vec2D drawWide = normVel.GetRotated(90).mul(cp(bulletWide));
+        Vec2D drawWide = normVel.getRotated(90).mul(cp(bulletWide));
 
         Vec2D topleft = getPos().plus(drawLen).minus(drawWide);
         Vec2D topright = getPos().plus(drawLen).plus(drawWide);
         Vec2D bottomright = getPos().minus(drawLen).plus(drawWide);
         Vec2D bottomleft = getPos().minus(drawLen).minus(drawWide);
 
-        /*Vec2D top = getPos().plus(drawLen);
+        /*
+        old style
+        Vec2D top = getPos().plus(drawLen);
         Vec2D bottom = getPos().minus(drawLen);
         Vec2D right = getPos().plus(drawWide);
         Vec2D left = getPos().minus(drawWide);

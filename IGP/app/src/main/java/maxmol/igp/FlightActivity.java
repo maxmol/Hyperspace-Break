@@ -17,18 +17,17 @@ import maxmol.igp.Drawing.GameDraw;
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.Stages;
 
-/*
-@ Activity class on which the game canvas is created
+/**
+ * Activity class on which the game canvas is created
  */
 public class FlightActivity extends Activity {
     private GameDraw gameDraw;
     public static FlightActivity context;
     public static MediaPlayer stage_music;
 
-    /*
-    @ Intialize and play background music
-    @params
-        int id: Music resource ID
+    /**
+     * Intialize and play background music
+     * @param id: Music resource ID
      */
     public static void playMusic(int id) {
         if (stage_music != null) {
@@ -40,8 +39,9 @@ public class FlightActivity extends Activity {
         stage_music.start();
     }
 
-    /*
-    @ Activity init. Create GameDraw, stop menu music
+    /**
+     * Activity init. Create GameDraw, stop menu music
+     * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +62,9 @@ public class FlightActivity extends Activity {
         setContentView(gameDraw);
     }
 
-    /*
-    @ This runs when player presses the "Back" button. We ask /user/ if they really want to
-    */
+    /**
+     * This runs when player presses the "Back" button. We ask /user/ if they really want to close this activity
+     */
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -83,8 +83,8 @@ public class FlightActivity extends Activity {
                 .show();
     }
 
-    /*
-    @ This runs after the game is stopped. We make sure that draw thread is closed.
+    /**
+     * This runs after the game is stopped. We make sure that draw thread is closed.
      */
     @Override
     protected void onDestroy() {
@@ -101,8 +101,8 @@ public class FlightActivity extends Activity {
         MainMenu.initMenuTheme();
     }
 
-    /*
-    @ Play background music again after the app was opened
+    /**
+     * Play background music again after the app was opened
      */
     @Override
     protected void onResume() {
@@ -113,8 +113,8 @@ public class FlightActivity extends Activity {
         }
     }
 
-    /*
-    @ If the application was minimized we pause the game and music
+    /**
+     * If the application was minimized we pause the game and music
      */
     @Override
     protected void onPause() {

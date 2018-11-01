@@ -11,7 +11,9 @@ import maxmol.igp.classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
-// This is the most important part of the game. This abstract class is the parent for all game objects you see on screen.
+/**
+ * This abstract class is the parent for all game objects you see in the game.
+ */
 public abstract class Entity {
     private Vec2D pos = new Vec2D(0, cp(50));
     private Vec2D[] pointsMesh;
@@ -79,24 +81,24 @@ public abstract class Entity {
         this.pos = pos;
     }
 
-    abstract public void Tick();
+    abstract public void tick();
 
-    public void OnTouch(MotionEvent event) {}
+    public void onTouch(MotionEvent event) {}
 
-    public void Move(Vec2D p) {
+    public void move(Vec2D p) {
         Vec2D pos = getPos().plus(p);
 
         if (limitMove()) {
             float s = cp(70);
-            pos = Vec2D.Clamp(pos, s, GameDraw.context.ScrW - s, s, GameDraw.context.ScrH - s);
+            pos = Vec2D.clamp(pos, s, GameDraw.context.scrW - s, s, GameDraw.context.scrH - s);
         }
 
         setPos(pos);
     }
 
-    abstract public void Draw(Canvas canvas);
+    abstract public void draw(Canvas canvas);
 
-    public void Remove() {
+    public void remove() {
         valid = false;
         GameDraw.context.entities.remove(this);
     }
@@ -106,7 +108,7 @@ public abstract class Entity {
     }
 
     public void takeDamage(int damage) {
-        Remove();
+        remove();
     }
 
     public int getCollisionRadius() {

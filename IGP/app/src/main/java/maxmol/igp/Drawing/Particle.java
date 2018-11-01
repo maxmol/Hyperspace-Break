@@ -7,6 +7,9 @@ import android.graphics.Paint;
 import maxmol.igp.classes.MUtil;
 import maxmol.igp.classes.Vec2D;
 
+/**
+ * A particle with some kind of physics
+ */
 public class Particle extends Entity {
     public enum Type {
         Square,
@@ -15,12 +18,12 @@ public class Particle extends Entity {
 
     public Type type = Type.Square;
     public int color = Color.RED;
-    public float startsize = 2;
-    public float endsize = 4;
+    public float startSize = 2;
+    public float endSize = 4;
     public float size = -1;
     public int alpha = -1;
-    public int startalpha = 255;
-    public int endalpha = 0;
+    public int startAlpha = 255;
+    public int endAlpha = 0;
     public float duration = 2f;
     public float life = -1;
     public Vec2D pos = new Vec2D();
@@ -33,31 +36,31 @@ public class Particle extends Entity {
     }
 
     @Override
-    public void Tick() {
+    public void tick() {
         pos.add(vel);
         vel.multiply(fric);
 
         if (alpha == -1) {
-            alpha = startalpha;
+            alpha = startAlpha;
         }
         if (size == -1) {
-            size = startsize;
+            size = startSize;
         }
         if (life == -1) {
             life = duration;
         }
 
-        alpha = (int) MUtil.Clamp(alpha + (endalpha - startalpha) * 0.02f / duration, 0, 255);
-        size = MUtil.Clamp(size + (endsize - startsize) * 0.02f / duration, 0);
+        alpha = (int) MUtil.clamp(alpha + (endAlpha - startAlpha) * 0.02f / duration, 0, 255);
+        size = MUtil.clamp(size + (endSize - startSize) * 0.02f / duration, 0);
 
         life -= 0.02f;
         if (life < 0) {
-            Remove();
+            remove();
         }
     }
 
     @Override
-    public void Draw(Canvas canvas) {
+    public void draw(Canvas canvas) {
         p.setColor(Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color)));
 
         switch (type) {

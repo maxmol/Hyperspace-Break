@@ -1,6 +1,8 @@
 package maxmol.igp.classes;
 
-// My own 2D Space Point class. With some useful additions.
+/**
+ * My own 2D Space Point class. With some useful additions.
+ */
 public class Vec2D {
     public double x, y;
 
@@ -61,21 +63,21 @@ public class Vec2D {
         return new Vec2D(Math.sin(degree), Math.cos(degree));
     }
 
-    public static Vec2D Clamp(Vec2D vec2d, double min_x, double max_x, double min_y, double max_y) {
-        return new Vec2D(MUtil.Clamp(vec2d.x, min_x, max_x), MUtil.Clamp(vec2d.y, min_y, max_y));
+    public static Vec2D clamp(Vec2D vec2d, double min_x, double max_x, double min_y, double max_y) {
+        return new Vec2D(MUtil.clamp(vec2d.x, min_x, max_x), MUtil.clamp(vec2d.y, min_y, max_y));
     }
 
-    public double Distance(Vec2D v) {
+    public double distance(Vec2D v) {
         return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
     }
 
-    public double Length() {
+    public double length() {
         return Math.sqrt(x * x + y * y);
     }
 
-    public Vec2D GetNormalized() {
+    public Vec2D getNormalized() {
         Vec2D v = new Vec2D();
-        double len = Length();
+        double len = length();
 
         v.x = x/len;
         v.y = y/len;
@@ -83,8 +85,8 @@ public class Vec2D {
         return v;
     }
 
-    public void Rotate(double degrees) {
-        Vec2D normal = this.GetNormalized();
+    public void rotate(double degrees) {
+        Vec2D normal = this.getNormalized();
         double ang = Math.toRadians(degrees);
         double sin = Math.sin(ang);
         double cos = Math.cos(ang);
@@ -95,8 +97,8 @@ public class Vec2D {
         this.y = newY;
     }
 
-    public Vec2D GetRotated(double degrees) {
-        Vec2D normal = this.GetNormalized();
+    public Vec2D getRotated(double degrees) {
+        Vec2D normal = this.getNormalized();
         double ang = Math.toRadians(degrees);
         double sin = Math.sin(ang);
         double cos = Math.cos(ang);
