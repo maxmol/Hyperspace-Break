@@ -22,7 +22,7 @@
             android:text="Select Level"
             android:fontFamily="@font/unlearn2"
             android:textColor="@android:color/white"
-            android:id="@+id/selectLevel_appName"
+            android:id="@+id/select_level_title"
             android:textAlignment="center"/>
 
         <GridLayout

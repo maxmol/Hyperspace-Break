@@ -53,30 +53,33 @@
 
 
          <Button
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:text="Campaign"
-             android:textSize="18sp"
-             android:fontFamily="@font/sabofilled"
-             style="@style/Widget.AppCompat.Button.Colored"
-             android:id="@+id/mainmenu_campaign"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Campaign"
+            android:textSize="18sp"
+            android:textColor="@color/light"
+            android:fontFamily="@font/sabofilled"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/mainmenu_campaign"/>
 
-         <Button
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Arcade"
             android:textSize="18sp"
+            android:textColor="@color/light"
             android:fontFamily="@font/sabofilled"
             style="@style/Widget.AppCompat.Button.Colored"
             android:id="@+id/mainmenu_arcade"/>
 
-         <Button
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:text="Options"
-             android:textSize="18sp"
-             android:fontFamily="@font/sabofilled"
-             style="@style/Widget.AppCompat.Button.Colored"
-             android:id="@+id/mainmenu_settings"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Options"
+            android:textColor="@color/light"
+            android:textSize="18sp"
+            android:fontFamily="@font/sabofilled"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/mainmenu_settings"/>
     </LinearLayout>
 </RelativeLayout>

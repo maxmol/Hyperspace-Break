@@ -87,7 +87,7 @@ public class GameActivity extends Activity {
                 panel2_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.colorAccent));
             }
             else {
-                panel2_btns.get(id).setBackgroundColor(Color.rgb(196, 64, 96));
+                panel2_btns.get(id).setBackgroundColor(Color.rgb(216, 27, 96));
             }
             panel2_btns.get(id).setText("NOT ENOUGH");
         }
@@ -96,7 +96,7 @@ public class GameActivity extends Activity {
                 panel2_btns.get(id).setBackgroundTintList(ContextCompat.getColorStateList(GameActivity.this, R.color.material_deep_teal_200));
             }
             else {
-                panel2_btns.get(id).setBackgroundColor(Color.rgb(64, 196, 96));
+                panel2_btns.get(id).setBackgroundColor(Color.rgb(128, 203, 196));
             }
             panel2_btns.get(id).setText("UPGRADE");
         }
@@ -502,6 +502,12 @@ public class GameActivity extends Activity {
         });
 
         panel2_updateBlocks();
+
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            for (Button b : panelButtons) {
+                b.setTypeface(font);
+            }
+        }
     }
 
     /**

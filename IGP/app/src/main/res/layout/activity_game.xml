@@ -26,6 +26,7 @@
             android:textSize="14sp"
             android:text="UPGRADE"
             style="@style/Widget.AppCompat.Button.Colored"
+            android:textColor="@color/light"
             android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_1_button"/>
         <Button
@@ -34,6 +35,7 @@
             android:layout_weight="1"
             android:textSize="14sp"
             android:text="Store"
+            android:textColor="@color/light"
             style="@style/Widget.AppCompat.Button.Colored"
             android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_2_button"/>
@@ -43,6 +45,7 @@
             android:layout_weight="1"
             android:textSize="14sp"
             android:text="Start"
+            android:textColor="@color/light"
             style="@style/Widget.AppCompat.Button.Colored"
             android:fontFamily="@font/sabofilled"
             android:id="@+id/game_panel_3_button"/>

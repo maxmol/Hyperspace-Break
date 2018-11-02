@@ -195,7 +195,7 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
             final int button10 = soundPool.load(GameDraw.context.getContext(), R.raw.button10, 1);
             final int blip1 = soundPool.load(GameDraw.context.getContext(), R.raw.blip1, 1);
 
-            addVGUI(new SuperButton(new Vec2D(scrW - cp(280), scrH + cp(40)), cp(120), cp(120), "☢", cp(80), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
+            addVGUI(new SuperButton(new Vec2D(scrW - cp(280), scrH + cp(40)), cp(120), cp(120), "!", cp(80), Color.argb(128, 64, 64, 64), new SuperButton.SuperPressEvent() {
                 @Override
                 public void onPress(SuperButton self, MotionEvent event) {
                     if (!GameDraw.context.ship.activateLaser()) soundPool.play(button10, 1, 1, 0, 0, 1);

@@ -2,8 +2,11 @@ package maxmol.igp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,7 +26,6 @@ public class MainMenu extends Activity {
     public static MainMenu context;
     public static MediaPlayer menu_theme;
     public boolean pressedButton = false;
-
     public static void initMenuTheme() {
 
         if (menu_theme != null) {
@@ -63,8 +65,7 @@ public class MainMenu extends Activity {
         try {
             if (f.getFile().exists()) {
                 SaveLoad.load();
-            }
-            else {
+            } else {
                 SaveLoad.save();
             }
         } catch (Exception e) {
@@ -105,6 +106,16 @@ public class MainMenu extends Activity {
 
         final TextView moneyView = findViewById(R.id.mainmenu_money);
         moneyView.setText(Game.formatMoney(Game.getMoney()));
+
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Typeface font = ResourcesCompat.getFont(this, R.font.sabofilled);
+            button_arcade.setTypeface(font);
+            button_campaign.setTypeface(font);
+            button_settings.setTypeface(font);
+            Typeface font2 = ResourcesCompat.getFont(this, R.font.unlearn2);
+            moneyView.setTypeface(font2);
+            ((TextView)findViewById(R.id.mainmenu_appname)).setTypeface(font2);
+        }
     }
 
     @Override

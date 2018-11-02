@@ -16,6 +16,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import maxmol.igp.classes.Game;
 import maxmol.igp.classes.Stages;
@@ -55,7 +56,7 @@ public class SelectLevel extends AppCompatActivity {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP)
                     continue_button = new Button(this, null, style, style);
                 else
-                    continue_button = new Button(this, null, style);
+                    continue_button = new Button(this);
             }
             else
                 continue_button = new Button(this);
@@ -101,6 +102,10 @@ public class SelectLevel extends AppCompatActivity {
 
             selectLevels.addView(continue_button);
             selectLevels.bringToFront();
+        }
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            Typeface font2 = ResourcesCompat.getFont(this, R.font.unlearn2);
+            ((TextView)findViewById(R.id.select_level_title)).setTypeface(font2);
         }
     }
 
