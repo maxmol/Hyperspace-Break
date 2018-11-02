@@ -105,6 +105,57 @@ public class Stages {
         @Override
         public void run() {
             switch (stage) {
+                case 0: {
+                    // - TUTORIAL - //
+                    FlightActivity.playMusic(R.raw.stage_music_1);
+
+                    GameDraw.context.ava.say("In 2521 aliens\ndestroyed our\nplanet.");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(50)) return;
+                    }
+
+                    GameDraw.context.ava.say("I was the \nonly survivor.");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(50)) return;
+                    }
+
+                    GameDraw.context.ava.say("For so long\nI was preparing\nfor revenge..");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(50)) return;
+                    }
+
+                    GameDraw.context.ava.say("On the control panel\nyou can start laser\nattack or pause.");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(100)) return;
+                    }
+
+                    GameDraw.context.ava.say("Touch the screen and\nuse the joystick\nto move.");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(100)) return;
+                    }
+
+                    GameDraw.context.ava.say("Kill aliens\nand don't let them\ndamage the ship.");
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(100)) return;
+                    }
+
+                    PathEnemy pe;
+                    pe = new PathEnemy(50, 20, getBulletGenerator(1), R.drawable.enemy, new Vec2D[]{new Vec2D(50, 25)}, true);
+                    pe.coinsCount = 10;
+                    GameDraw.context.AddEntity(pe);
+
+                    while (pe.getHealth() > 0) {
+                        if (wait(100)) return;
+                    }
+
+                    GameDraw.context.ava.say("Nice job!\nDon't forget to \ncollect coins.");
+
+                    while (GameDraw.context.ava.isTalking()) {
+                        if (wait(100)) return;
+                    }
+
+                    break;
+                }
                 case 1: {
                     // - STAGE I - //
                     FlightActivity.playMusic(R.raw.stage_music_1);

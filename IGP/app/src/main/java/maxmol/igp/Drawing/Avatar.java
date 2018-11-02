@@ -38,6 +38,13 @@ public class Avatar extends SuperVGUI {
         saying = text;
     }
 
+    /**
+     * @return if the avatar is currently speaking
+     */
+    public boolean isTalking() {
+        return text != null || saying != null;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         Paint p = new Paint();
@@ -60,7 +67,7 @@ public class Avatar extends SuperVGUI {
 
         if (saying != null) {
             if (charCooldown <= 0) {
-                charCooldown = 4;
+                charCooldown = 2;
 
                 if (text == null) {
                     text = "" + saying.charAt(0);

@@ -34,7 +34,7 @@ public class Game {
      * Resets all game progress
      */
     public static void reset() {
-        step = 1;
+        step = 0;
         money = 30;
         maxHealthLevel = 0;
         bombLevel = 0;

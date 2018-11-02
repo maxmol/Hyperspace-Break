@@ -46,7 +46,7 @@ public class SelectLevel extends AppCompatActivity {
         final int button10 = soundPool.load(getApplicationContext(), R.raw.button10, 1);
         final int blip1 = soundPool.load(getApplicationContext(), R.raw.blip1, 1);
 
-        for (int i = 1; i <= Stages.COUNT; i++) {
+        for (int i = 0; i <= Stages.COUNT; i++) {
             final Integer finalI = i;
             int style = android.R.style.Widget_Material_Button_Colored;
             Button continue_button;
