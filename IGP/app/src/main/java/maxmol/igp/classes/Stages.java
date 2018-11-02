@@ -413,7 +413,7 @@ public class Stages {
                 }
                 case 5: {
                     // STAGE V - FINAL
-                    FlightActivity.playMusic(R.raw.stage_music_2);
+                    FlightActivity.playMusic(R.raw.boss_theme);
                     GameDraw.context.ava.say("This is the end\nof my journey\nof my revenge...");
 
                     BulletGenerator bossGenerator = new BulletGenerator(4, 50.0, 10.0, -0.02, null, 5, 2, 2, 180.0, -21.0, null, 1.5, 30.0, null, null);

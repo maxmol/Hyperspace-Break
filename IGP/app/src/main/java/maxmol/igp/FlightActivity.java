@@ -67,6 +67,7 @@ public class FlightActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
+        GameDraw.context.paused = true;
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Are you sure you want to quit?")
