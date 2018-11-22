@@ -587,6 +587,8 @@ public class Stages {
                     // Reset our stats
                     Game.reset();
 
+                    GameDraw.context.ship.initBulletGenerators();
+
                     FlightActivity.playMusic(R.raw.stage_music_1);
 
                     Random random = new Random();
