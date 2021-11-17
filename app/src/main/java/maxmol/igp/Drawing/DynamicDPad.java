@@ -3,7 +3,7 @@ package maxmol.igp.Drawing;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * A joystick that is created where the user tapped and is there until the screen is released or touched outside the dpad circle.

@@ -8,7 +8,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 
 import maxmol.igp.R;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 

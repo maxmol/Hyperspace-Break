@@ -4,8 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.MUtil;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * A particle with some kind of physics

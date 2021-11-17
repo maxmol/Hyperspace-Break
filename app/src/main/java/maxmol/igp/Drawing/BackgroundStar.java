@@ -5,8 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import maxmol.igp.StarsBackground;
-import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.MUtil;
+import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 

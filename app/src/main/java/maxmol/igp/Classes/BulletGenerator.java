@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 import maxmol.igp.Drawing.Bullet;
 import maxmol.igp.Drawing.Entity;

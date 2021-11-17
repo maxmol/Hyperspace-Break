@@ -15,11 +15,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.Stages;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.Stages;
 
 /**
  * An activity where we can chose what level to start. (also freemode)

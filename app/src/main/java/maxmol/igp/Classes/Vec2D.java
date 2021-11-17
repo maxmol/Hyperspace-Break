@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 /**
  * My own 2D Space Point class. With some useful additions.

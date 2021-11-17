@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 /**
  * My useful math methods.

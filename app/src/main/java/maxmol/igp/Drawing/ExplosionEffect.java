@@ -11,7 +11,7 @@ import android.media.SoundPool;
 import android.os.AsyncTask;
 
 import maxmol.igp.R;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 

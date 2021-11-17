@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import maxmol.igp.R;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * Our character icon. It can talk!

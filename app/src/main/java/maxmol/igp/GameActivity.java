@@ -27,9 +27,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.SaveLoad;
-import maxmol.igp.classes.SaveLoad.SaveLoad_NoFileSpecified;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.SaveLoad;
+import maxmol.igp.Classes.SaveLoad.SaveLoad_NoFileSpecified;
 
 /**
  * Buy/Upgrades menu activity. It's called 'GameActivity' only because initially I thought it would be the actual game activity with game canvas and all.

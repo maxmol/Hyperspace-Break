@@ -15,9 +15,9 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import maxmol.igp.R;
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.Stages;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.Stages;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * Classes organization and preparation to start the game

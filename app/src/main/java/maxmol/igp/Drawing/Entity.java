@@ -7,7 +7,7 @@ import android.graphics.Path;
 import android.graphics.Region;
 import android.view.MotionEvent;
 
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 

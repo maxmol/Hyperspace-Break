@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * A simple class i made to make working with filesystem simpler
  */
-public class IFile {
+public class SimpleFile {
     private String filename;
     private File file;
 
@@ -35,14 +35,14 @@ public class IFile {
     /**
      * ... empty generator ...
      */
-    public IFile() {
+    public SimpleFile() {
 
     }
 
     /**
      * @param filename: path to file
      */
-    public IFile(String filename) {
+    public SimpleFile(String filename) {
         this.open(filename);
     }
 
@@ -186,7 +186,7 @@ public class IFile {
      * @throws IFileNotInitialized
      */
     public static String readFile(String filename) throws IFileExistenceException, FileNotFoundException, IFileNotInitialized {
-        IFile f = new IFile(filename);
+        SimpleFile f = new SimpleFile(filename);
         return f.read();
     }
 
@@ -198,7 +198,7 @@ public class IFile {
      * @throws IFileNotInitialized
      */
     public static void writeFile(String filename, String content) throws IOException, IFileNotInitialized {
-        IFile f = new IFile(filename);
+        SimpleFile f = new SimpleFile(filename);
         f.write(content);
     }
 
@@ -211,7 +211,7 @@ public class IFile {
      * @throws IFileNotInitialized
      */
     public static void appendFile(String filename, String content) throws IFileExistenceException, IOException, IFileNotInitialized {
-        IFile f = new IFile(filename);
+        SimpleFile f = new SimpleFile(filename);
         f.append(content);
     }
 

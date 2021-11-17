@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 /**
  * Storing game information in a file
@@ -14,7 +14,7 @@ public class SaveLoad {
         }
     }
 
-    private static IFile saveFile;
+    private static SimpleFile saveFile;
     private static String splitter = "\n";
 
     /**
@@ -22,13 +22,13 @@ public class SaveLoad {
      * @param filename: path to file
      */
     public static void setSaveFile(String filename) {
-        saveFile = new IFile(filename);
+        saveFile = new SimpleFile(filename);
     }
 
     /**
      * @return our set save file
      */
-    public static IFile getSaveFile() {
+    public static SimpleFile getSaveFile() {
         return saveFile;
     }
 

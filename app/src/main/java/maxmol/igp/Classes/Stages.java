@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 import android.content.DialogInterface;
 import android.graphics.Canvas;

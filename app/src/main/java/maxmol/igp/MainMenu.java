@@ -12,10 +12,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.IFile;
-import maxmol.igp.classes.SaveLoad;
-import maxmol.igp.classes.Stages;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.SimpleFile;
+import maxmol.igp.Classes.SaveLoad;
+import maxmol.igp.Classes.Stages;
 
 /**
  * The first activity created after we launch the application.
@@ -47,7 +47,7 @@ public class MainMenu extends Activity {
 
         context = this;
 
-        IFile f = new IFile();
+        SimpleFile f = new SimpleFile();
 
         String filePath = context.getFilesDir() + "/save.txt";
 

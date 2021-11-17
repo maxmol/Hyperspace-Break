@@ -11,11 +11,11 @@ import android.media.SoundPool;
 
 import maxmol.igp.FlightActivity;
 import maxmol.igp.R;
-import maxmol.igp.classes.BulletGenerator;
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.Stages;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.BulletGenerator;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.MUtil;
+import maxmol.igp.Classes.Stages;
+import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 

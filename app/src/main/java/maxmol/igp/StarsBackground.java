@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import maxmol.igp.Drawing.BackgroundStar;
 import maxmol.igp.Drawing.Entity;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * A simple View we use to create moving stars in main menu.

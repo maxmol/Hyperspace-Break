@@ -3,7 +3,7 @@ package maxmol.igp.Drawing;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * This is the base class for UI objects in surfaceview. Buttons, Labels, Forms etc. I'll use this in my future projects

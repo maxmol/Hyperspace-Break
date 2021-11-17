@@ -2,8 +2,8 @@ package maxmol.igp.Drawing;
 
 import java.util.LinkedList;
 
-import maxmol.igp.classes.BulletGenerator;
-import maxmol.igp.classes.Vec2D;
+import maxmol.igp.Classes.BulletGenerator;
+import maxmol.igp.Classes.Vec2D;
 
 /**
  * An enemy that uses a specific movement and rotation path.

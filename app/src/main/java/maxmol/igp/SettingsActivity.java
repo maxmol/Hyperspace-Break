@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.SaveLoad;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.SaveLoad;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package maxmol.igp.classes;
+package maxmol.igp.Classes;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

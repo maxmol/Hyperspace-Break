@@ -13,9 +13,9 @@ import android.view.SurfaceHolder;
 import maxmol.igp.FlightActivity;
 import maxmol.igp.GameActivity;
 import maxmol.igp.R;
-import maxmol.igp.classes.Game;
-import maxmol.igp.classes.MUtil;
-import maxmol.igp.classes.Stages;
+import maxmol.igp.Classes.Game;
+import maxmol.igp.Classes.MUtil;
+import maxmol.igp.Classes.Stages;
 
 /**
  * This is the drawing and thinking machine. It calls and draws all entities in the game.
