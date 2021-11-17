@@ -61,7 +61,7 @@ public class Avatar extends SuperVGUI {
             int y = 0;
             for (String line: text.split("\n")) {
                 canvas.drawText(line, (int) (getPos().x + size + GameDraw.cp(10)), (int) (getPos().y + GameDraw.cp(30)) + y, p);
-                y += GameDraw.cp(32);
+                y += (int) GameDraw.cp(32);
             }
         }
 

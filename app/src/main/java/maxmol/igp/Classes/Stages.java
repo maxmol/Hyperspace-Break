@@ -684,7 +684,7 @@ public class Stages {
 
             Game.addMoney(Stages.getMoney());
             
-            if (Game.getStep() == Game.getStage()) {
+            if (Game.getStep().equals(Game.getStage())) {
                 Game.nextStep();
                 Game.setStage(Game.getStep());
             }

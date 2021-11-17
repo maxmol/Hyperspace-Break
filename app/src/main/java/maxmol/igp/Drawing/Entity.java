@@ -11,10 +11,13 @@ import maxmol.igp.Classes.Vec2D;
 
 import static maxmol.igp.Drawing.GameDraw.cp;
 
+import java.util.Random;
+
 /**
  * This abstract class is the parent for all game objects you see in the game.
  */
 public abstract class Entity {
+    protected final static Random random = new Random();
     private Vec2D pos = new Vec2D(0, cp(50));
     private Vec2D[] pointsMesh;
     private Path path;
@@ -26,7 +29,7 @@ public abstract class Entity {
     };
 
     public void setPointsMesh(Vec2D[] pts) {
-        pointsMesh = pts;
+        pointsMesh = pts.clone();
 
         path = generatePath();
 

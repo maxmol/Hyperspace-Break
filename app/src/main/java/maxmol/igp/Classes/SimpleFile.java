@@ -17,7 +17,7 @@ public class SimpleFile {
     /**
      * Why not make useless dedicated exceptions for our new class
      */
-    public class IFileExistenceException extends Exception {
+    public static class IFileExistenceException extends Exception {
         IFileExistenceException(String filename) {
             super("File does not exist (" + filename + ")");
         }
@@ -26,7 +26,7 @@ public class SimpleFile {
     /**
      * Same story
      */
-    public class IFileNotInitialized extends Exception {
+    public static class IFileNotInitialized extends Exception {
         IFileNotInitialized() {
             super("File has not been initialized");
         }
@@ -73,12 +73,12 @@ public class SimpleFile {
         }
 
         Scanner scanner = new Scanner(this.file);
-        String content = "";
+        StringBuilder content = new StringBuilder();
         while (scanner.hasNext()) {
-            content = content + scanner.next() + "\n";
+            content.append(scanner.next()).append("\n");
         }
         scanner.close();
-        return content;
+        return content.toString();
     }
 
     /**
@@ -170,12 +170,12 @@ public class SimpleFile {
      * delete the file
      * @throws IFileNotInitialized: we didn't open it
      */
-    public void delete() throws IFileNotInitialized {
+    public boolean delete() throws IFileNotInitialized {
         if (file == null) {
             throw new IFileNotInitialized();
         }
 
-        file.delete();
+        return file.delete();
     }
 
     /**

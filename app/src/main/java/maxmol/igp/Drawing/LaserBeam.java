@@ -114,7 +114,14 @@ public class LaserBeam extends Entity {
         float len = (float) Math.abs(e.getPos().distance(getPos()));
         if (len < length) length = len;
         e.takeDamage(1);
-        GameDraw.context.AddEntity(new SparksEffect(e.getPos(), (int) (Math.random() * 3) + 1, 1, 0, 5, 1, Color.rgb(255, 196, 64)));
+        GameDraw.context.AddEntity(
+                new SparksEffect(
+                        e.getPos(),
+                        1 + random.nextInt(3),
+                        1, 0, 5, 1,
+                        Color.rgb(255, 196, 64)
+                )
+        );
     }
 
     @Override

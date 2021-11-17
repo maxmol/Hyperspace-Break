@@ -20,8 +20,8 @@ public class Bullet extends Entity{
     public double curving = 0;
     protected int damage;
     protected Entity owner;
-    protected static double bulletLen = 12;
-    protected static double bulletWide = 4;
+    protected final static double bulletLen = 12;
+    protected final static double bulletWide = 4;
 
     protected Paint bulletPaint;
 
@@ -119,7 +119,17 @@ public class Bullet extends Entity{
      */
     public void hit(Entity e) {
         if (e != null) e.takeDamage(getDamage());
-        GameDraw.context.AddEntity(new SparksEffect(getPos(), 3 + (int)(Math.random() * 3), 1, 0, 6, 1, this.getOwner() instanceof Ship ? Color.rgb(235, 144, 40) : Color.rgb(64, 111, 230)));
+        GameDraw.context.AddEntity(
+                new SparksEffect(
+                        getPos(),
+                        3 + random.nextInt(3),
+                        1,
+                        0,
+                        6,
+                        1,
+                        this.getOwner() instanceof Ship ? Color.rgb(235, 144, 40) : Color.rgb(64, 111, 230)
+                )
+        );
         remove();
     }
 

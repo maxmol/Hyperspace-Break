@@ -29,6 +29,7 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
     public Ship ship;
     public Avatar ava;
     public boolean shouldSort = false;
+    public SoundPool soundPool;
 
     public int realW, realH;
     public int scrW, scrH;
@@ -179,6 +180,8 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
         drawThread = new DrawThread(surfaceHolder);
         drawThread.start();
 
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+
         realW = this.getWidth();
         scrW = 720;//this.getWidth();
         double coef = ((float) scrW /this.getWidth());
@@ -191,7 +194,6 @@ public class GameDraw extends SurfaceView implements SurfaceHolder.Callback {
         clipRegion = new Region(-scrW, -scrH, scrW, scrH);
 
         if (ship == null) { // initializing game objects
-            final SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
             final int button10 = soundPool.load(GameDraw.context.getContext(), R.raw.button10, 1);
             final int blip1 = soundPool.load(GameDraw.context.getContext(), R.raw.blip1, 1);
 

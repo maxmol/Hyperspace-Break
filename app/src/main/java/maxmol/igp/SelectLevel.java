@@ -44,7 +44,7 @@ public class SelectLevel extends AppCompatActivity {
 
         final SoundPool soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
         final int button10 = soundPool.load(getApplicationContext(), R.raw.button10, 1);
-        final int blip1 = soundPool.load(getApplicationContext(), R.raw.blip1, 1);
+        //final int blip1 = soundPool.load(getApplicationContext(), R.raw.blip1, 1);
 
         for (int i = 0; i <= Stages.COUNT; i++) {
             final Integer finalI = i;

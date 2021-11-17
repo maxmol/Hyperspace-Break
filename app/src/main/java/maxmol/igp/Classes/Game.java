@@ -21,7 +21,7 @@ public class Game {
 
     public static CharSequence[] difficulties = new CharSequence[]{"Easy", "Normal", "Hard"};
 
-    public static Integer laserAttackCost = 50;
+    public final static Integer laserAttackCost = 50;
     public static Integer laserAttackCount;
 
     private static Integer stage;

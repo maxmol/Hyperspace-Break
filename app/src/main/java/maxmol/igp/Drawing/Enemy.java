@@ -292,7 +292,14 @@ public class Enemy extends Entity {
     }
 
     public void kill() {
-        GameDraw.context.AddEntity(new SparksEffect(new Vec2D(getPos().x, getPos().y), (int) (Math.random() * 5) + 12, 1, 0, 8 * explosion, 0.8, Color.rgb(196, 0, 0)));
+        GameDraw.context.AddEntity(
+                new SparksEffect(
+                        new Vec2D(getPos().x, getPos().y),
+                        12 + random.nextInt(5),
+                        1, 0, 8 * explosion, 0.8,
+                        Color.rgb(196, 0, 0)
+                )
+        );
         GameDraw.context.AddEntity(new ExplosionEffect(new Vec2D(getPos().x, getPos().y), 1.5 * explosion, 0));
 
         for (Entity e: GameDraw.context.getEntities()) {

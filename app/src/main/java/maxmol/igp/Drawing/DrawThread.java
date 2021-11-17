@@ -177,7 +177,7 @@ public class DrawThread extends Thread {
                 p.setTextSize(cp(64));
                 p.setTextAlign(Paint.Align.CENTER);
                 p.setTypeface(unlearn);
-                canvas.drawText("Paused", GameDraw.context.scrW / 2, cp(120), p);
+                canvas.drawText("Paused", GameDraw.context.scrW / 2f, cp(120), p);
             }
 
             long deltaTime = System.currentTimeMillis() - sysTime + 1;

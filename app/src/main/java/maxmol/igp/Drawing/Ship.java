@@ -77,7 +77,7 @@ public class Ship extends Entity {
         GameDraw.context.addVGUI(movePad);
 
 
-        setPos(new Vec2D(GameDraw.context.scrW /2, GameDraw.context.scrH * 0.8));
+        setPos(new Vec2D(GameDraw.context.scrW / 2f, GameDraw.context.scrH * 0.8));
 
         initBulletGenerators();
 
@@ -344,7 +344,14 @@ public class Ship extends Entity {
                 armor = 0;
 
                 if (Game.getHealth() <= 0) {
-                    GameDraw.context.AddEntity(new SparksEffect(new Vec2D(getPos().x, getPos().y), (int) (Math.random() * 5) + 12, 1, 0, 10, 0.8, Color.rgb(196, 0, 0)));
+                    GameDraw.context.AddEntity(
+                            new SparksEffect(
+                                    new Vec2D(getPos().x, getPos().y),
+                                    12 + random.nextInt(5),
+                                    1, 0, 10, 0.8,
+                                    Color.rgb(196, 0, 0)
+                            )
+                    );
                     GameDraw.context.AddEntity(new ExplosionEffect(new Vec2D(getPos().x, getPos().y), 2, 0));
 
                     if (!Stages.isArcade()) {

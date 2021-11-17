@@ -19,23 +19,22 @@ import static maxmol.igp.Drawing.GameDraw.cp;
  * Boom!
  */
 public class ExplosionEffect extends Entity {
-    private double size = 1;
     private int updateRate;
     private static final int maxFrames = 48;
     private static final float magicValue = 1f;
     private int frameSize;
-    private int updateCounter = updateRate;
+    private int updateCounter;
     private int frame = 0;
     private static final Bitmap mainBitmap = BitmapFactory.decodeResource(GameDraw.context.getResources(), R.drawable.explosion);
     private Bitmap bitmap;
-    private static SoundPool soundPool = null;
-    private static int explosionSound;
+    private static Integer explosionSound;
 
     public ExplosionEffect(Vec2D pos, double size, int updateRate) {
         setPos(pos);
-        this.size = size;
 
         this.updateRate = updateRate;
+        this.updateCounter = updateRate;
+
         frameSize = (int) (cp(256) * size);
 
         AsyncTask asyncTask = new AsyncTask() {
@@ -47,12 +46,11 @@ public class ExplosionEffect extends Entity {
         };
         asyncTask.execute();
 
-        if (soundPool == null) {
-            soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
+        SoundPool soundPool = GameDraw.context.soundPool;
+        if (explosionSound == null) {
             explosionSound = soundPool.load(GameDraw.context.getContext(), R.raw.explode4, 1);
-
             soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-                public void onLoadComplete(SoundPool soundPool, int sampleId,int status) {
+                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
                     soundPool.play(explosionSound, 1f, 1f, 0, 0, 1.2f);
                 }
             });
@@ -79,7 +77,18 @@ public class ExplosionEffect extends Entity {
         if (bitmap == null) return;
 
         int x = (int) getPos().x, y = (int) getPos().y;
-        canvas.drawBitmap(bitmap, new Rect((int) (frame * frameSize * magicValue), 0, (int) ((frame + 1) * frameSize * magicValue), frameSize), new RectF(x - frameSize/2 * magicValue, y - frameSize/2, x + frameSize/2 * magicValue, y + frameSize/2), new Paint());
+        canvas.drawBitmap(bitmap,
+                new Rect(
+                        (int) (frame * frameSize * magicValue),
+                        0,
+                        (int) ((frame + 1) * frameSize * magicValue),
+                        frameSize
+                ), new RectF(
+                        x - frameSize/2f * magicValue,
+                        y - frameSize/2f,
+                        x + frameSize/2f * magicValue,
+                        y + frameSize/2f), new Paint()
+        );
     }
 
     @Override
